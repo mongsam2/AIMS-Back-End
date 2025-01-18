@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'students.apps.StudentsConfig',
     'documents.apps.DocumentsConfig',
     'aims.apps.AimsConfig',
+    'users.apps.UsersConfig',
 
 ]
 
@@ -108,6 +109,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# User Model
+AUTH_USER_MODEL = 'users.CustomUser'
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
