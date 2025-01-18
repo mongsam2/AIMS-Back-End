@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     # Custom apps
     'students.apps.StudentsConfig',
     'documents.apps.DocumentsConfig',
+    'aims.apps.AimsConfig',
 
 ]
 

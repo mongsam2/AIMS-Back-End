@@ -14,3 +14,8 @@ class Department(models.Model):
 
     def __str__(self):
         return self.department
+
+class Applicants(models.Model):
+    application_type = models.CharField(max_length=50)
+    active = models.BooleanField(default=True)
+    student = models.ForeignKey('Student', on_delete=models.CASCADE)
