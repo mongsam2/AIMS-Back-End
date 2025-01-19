@@ -3,12 +3,19 @@ from rest_framework import serializers
 from .models import Document, DocumentTypeChoices
 
 class DocumentSerializer(ModelSerializer):
+    '''
+    새로운 파일을 업로드할 때, 사용하는 Serializer
+    '''
     class Meta:
         model = Document
-        fields = '__all__'
+        exclude = ['memo', 'state']
 
     def validate_document_type(self, value):
         if value not in DocumentTypeChoices:
             raise serializers.ValidationError(f'{value}는 존재하지 않는 서류의 유형입니다.')
         return value
-    
+
+class DocumentStatusSerializer(ModelSerializer):
+    class Meta:
+        model = Document
+        fileds = ['state']
