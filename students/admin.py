@@ -4,7 +4,7 @@ from .models import Student, Department, Applicant
 # Register your models here.
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
-    list_display = ('name', 'department', 'phone')
+    list_display = ('student_id', 'name', 'department', 'phone')
 
 @admin.register(Department)
 class DepartmentAdmin(admin.ModelAdmin):

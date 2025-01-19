@@ -2,12 +2,13 @@ from django.db import models
 
 # Create your models here.
 class Student(models.Model):
+    student_id = models.CharField(max_length=8, primary_key=True)
     name = models.CharField(max_length=10)
     department = models.ForeignKey('Department', on_delete=models.CASCADE)
     phone = models.CharField(max_length=11)
 
     def __str__(self):
-        return self.name
+        return f"{self.name}({self.student_id})"
 
 class Department(models.Model):
     department = models.CharField(max_length=50)
