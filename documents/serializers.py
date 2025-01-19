@@ -1,6 +1,8 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, SerializerMethodField
 from rest_framework import serializers
 from .models import Document, DocumentTypeChoices
+from aims.models import Summarization
+from aims.serializers import ReasonsSerializer
 
 class DocumentSerializer(ModelSerializer):
     '''
@@ -19,3 +21,16 @@ class DocumentStatusSerializer(ModelSerializer):
     class Meta:
         model = Document
         fileds = ['state']
+
+class DocumentReasonsSerializer(ModelSerializer):
+    reasons = ReasonsSerializer(many=True)
+
+    class Meta:
+        model = Document
+        fields = ['file_url', 'reasons']
+
+class StudentRecordsSerializer(ModelSerializer):
+    class Meta:
+        model = Document
+        fields = ['id']
+        

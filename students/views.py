@@ -6,5 +6,5 @@ from .serializers import StudentListSerializer
 
 # Create your views here.
 class AplicantsListView(generics.ListAPIView):
-    queryset = Student.objects.all()
+    queryset = Student.objects.all().order_by('student_id')
     serializer_class = StudentListSerializer

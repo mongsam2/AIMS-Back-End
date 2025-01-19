@@ -1,10 +1,53 @@
-from django.shortcuts import render
+from rest_framework.views import APIView
+from rest_framework.response import Response
+
+from rest_framework.exceptions import NotFound
+
 from rest_framework import generics
 from .models import Document
-from .serializers import DocumentSerializer
+from aims.models import Summarization
+from .serializers import DocumentSerializer, DocumentReasonsSerializer, StudentRecordsSerializer
 from rest_framework.parsers import MultiPartParser, FormParser
 
 # Create your views here.
 class DocumentCreateView(generics.CreateAPIView):
     queryset = Document.objects.all()
     serializer_class = DocumentSerializer
+
+class DocumentListView(generics.ListAPIView):
+    serializer_class = DocumentReasonsSerializer
+    pagination_class = None
+
+    def get_queryset(self):
+        student_id = self.kwargs.get('student_id')
+        document_type = self.kwargs.get('document_type')
+        documents = Document.objects.filter(student_id=student_id, document_type=document_type).order_by('-upload_date')
+        return documents
+
+class StudentRecordsView(APIView):
+    def get(self, request):
+        student_records = Document.objects.filter(document_type='학생생활기록부', state="제출").order_by('upload_date').values("id")
+        answer = []
+        for record in student_records:
+            answer.append(record['id'])
+        return Response(answer)
+
+class StudentRecordsDetailView(APIView):
+    def get(self, request, record_id):
+        print('요청 들어옴')
+        try:
+            record = Document.objects.get(id=record_id)
+        except Document.DoesNotExist:
+            raise NotFound(f"{record_id}: 해당 id의 학생생활기록부를 찾을 수 없습니다.")
+        
+        try: 
+            summarization = Summarization.objects.get(document=record)
+        except Summarization.DoesNotExist:
+            # 이 부분이 발생한다면, 요약 생성 api를 호출해서 요약본을 생성
+            raise NotFound(f"{record_id}: 해당 학생생활기록부의 요약 내용이 아직 생성되지 않았습니다.")
+        return Response({
+            "file_url": record.file_url.url, 
+            "content": summarization.content, 
+            "question": summarization.question,
+            'memo': record.memo
+            }, status=200)

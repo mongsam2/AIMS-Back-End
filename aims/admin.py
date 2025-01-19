@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Inappropriate_Reason, Evaluation, Summarization 
+from .models import InappropriateReason, Evaluation, Summarization 
 
 # Uitls
 class ShortContent:
@@ -7,7 +7,7 @@ class ShortContent:
          return f"{obj.content[:50]}..." if len(obj.content) > 30 else obj.content
 
 # Register your models here.
-@admin.register(Inappropriate_Reason)
+@admin.register(InappropriateReason)
 class Inappropriate_ReasonAdmin(admin.ModelAdmin, ShortContent):
     list_display = ('document', 'short_content')
 

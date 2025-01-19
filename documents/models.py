@@ -27,4 +27,4 @@ class Document(models.Model):
     file_url = models.FileField(upload_to=upload_to)
 
     def __str__(self):
-        return f"{self.student}의 {self.document_type}"
+        return f"{self.student}의 {self.document_type}({self.state})"
