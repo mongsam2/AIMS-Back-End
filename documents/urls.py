@@ -1,10 +1,12 @@
 from django.urls import path
-from .views import DocumentCreateView, DocumentListView, StudentRecordsView, StudentRecordsDetailView
+from . import views
 
 
 urlpatterns = [
-    path('', DocumentCreateView.as_view()),
-    path('student-records/<int:record_id>/', StudentRecordsDetailView.as_view()),
-    path('<str:student_id>/<str:document_type>/', DocumentListView.as_view()),
-    path('student-records/', StudentRecordsView.as_view()),
+    path('', views.DocumentCreateView.as_view()),
+    path('student-records/<int:record_id>/', views.StudentRecordDetailView.as_view()),
+    path('student-records/', views.StudentRecordsView.as_view()),
+    path('essays/', views.EssaysView.as_view()),
+    path('essays/<int:essay_id>/', views.EssayDetailView.as_view()),
+    path('<str:student_id>/<str:document_type>/', views.DocumentListView.as_view()),
 ]

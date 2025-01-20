@@ -24,7 +24,8 @@ class Evaluation(models.Model):
 class Summarization(models.Model):
     content = models.TextField()
     question = models.TextField()
-    document = models.ForeignKey(Document, on_delete=models.CASCADE)    
+    document = models.ForeignKey(Document, on_delete=models.CASCADE)
+    memo = models.TextField(null=True, blank=True, default='')
 
     def __str__(self):
         return f"{self.document} 요약"

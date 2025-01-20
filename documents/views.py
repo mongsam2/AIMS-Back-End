@@ -5,8 +5,10 @@ from rest_framework.exceptions import NotFound
 
 from rest_framework import generics
 from .models import Document
-from aims.models import Summarization
-from .serializers import DocumentSerializer, DocumentReasonsSerializer, StudentRecordsSerializer
+from aims.models import Summarization, Evaluation
+
+from .serializers import DocumentSerializer, DocumentReasonsSerializer
+from aims.serializers import EvaluationSerializer, SummarizationSerializer
 from rest_framework.parsers import MultiPartParser, FormParser
 
 # Create your views here.
@@ -32,22 +34,32 @@ class StudentRecordsView(APIView):
             answer.append(record['id'])
         return Response(answer)
 
-class StudentRecordsDetailView(APIView):
-    def get(self, request, record_id):
-        print('요청 들어옴')
+class StudentRecordDetailView(generics.RetrieveUpdateAPIView):
+    serializer_class = SummarizationSerializer
+
+    def get_object(self):
+        record_id = self.kwargs.get('record_id')
         try:
-            record = Document.objects.get(id=record_id)
-        except Document.DoesNotExist:
-            raise NotFound(f"{record_id}: 해당 id의 학생생활기록부를 찾을 수 없습니다.")
-        
-        try: 
-            summarization = Summarization.objects.get(document=record)
+            summarization = Summarization.objects.get(document=record_id)
         except Summarization.DoesNotExist:
-            # 이 부분이 발생한다면, 요약 생성 api를 호출해서 요약본을 생성
-            raise NotFound(f"{record_id}: 해당 학생생활기록부의 요약 내용이 아직 생성되지 않았습니다.")
-        return Response({
-            "file_url": record.file_url.url, 
-            "content": summarization.content, 
-            "question": summarization.question,
-            'memo': record.memo
-            }, status=200)
+            raise NotFound(f"{record_id}: 해당 id의 학생생활기록부 요약본을 찾을 수 없습니다.")
+        return summarization
+    
+class EssaysView(APIView):
+    def get(self, request):
+        essays = Document.objects.filter(document_type='논술').order_by('upload_date').values("id")
+        answer = []
+        for essay in essays:
+            answer.append(essay['id'])
+        return Response(answer)
+
+class EssayDetailView(generics.RetrieveUpdateAPIView):
+    serializer_class = EvaluationSerializer
+
+    def get_object(self):
+        essay_id = self.kwargs.get('essay_id')
+        try:
+            evaluation = Evaluation.objects.get(document=essay_id)
+        except Evaluation.DoesNotExist:
+            raise NotFound(f"{essay_id}: 해당 id의 논술 평가본을 찾을 수 없습니다.")
+        return evaluation

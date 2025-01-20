@@ -10,7 +10,7 @@ class DocumentSerializer(ModelSerializer):
     '''
     class Meta:
         model = Document
-        exclude = ['memo', 'state']
+        exclude = ['state']
 
     def validate_document_type(self, value):
         if value not in DocumentTypeChoices:

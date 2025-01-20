@@ -8,6 +8,7 @@ class DocumentTypeChoices(models.TextChoices):
     기초생활수급자 = '기초생활수급자', '기초생활수급자'
     차상위계층 = '차상위계층', '차상위계층'
     농어촌학생 = '농어촌학생', '농어촌학생'
+    논술 = '논술', '논술'
 
 class DocumentStateChoices(models.TextChoices):
     미제출 = '미제출', '미제출'
@@ -18,7 +19,6 @@ class Document(models.Model):
     document_type = models.CharField(max_length=50)
     student = models.ForeignKey('students.Student', on_delete=models.CASCADE, related_name='documents')
     upload_date = models.DateTimeField(auto_now_add=True)
-    memo = models.TextField(blank=True, null=True, default='')
     state = models.CharField(max_length=10, choices=DocumentStateChoices.choices, default=DocumentStateChoices.미제출)
 
     def upload_to(self, filename):
