@@ -11,6 +11,10 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,9 +27,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-jkbfl%9_4z5)y&o&9fx57unen4)))lrw7157*jn7!$^7#!12&!'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['3.37.240.199']
+ALLOWED_HOSTS = ['3.37.240.199', '127.0.0.1']
 
 
 # Application definition
@@ -143,3 +147,15 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',  # 기본 페이지네이션 클래스
     'PAGE_SIZE': 15,  # 한 페이지에 표시할 항목 수
 }
+
+# AWS
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
+AWS_S3_REGION_NAME = 'ap-northeast-2'
+AWS_S3_CUSTOM_DOMAIN = '%s.s3.%s.amazonaws.com' % (AWS_STORAGE_BUCKET_NAME,AWS_S3_REGION_NAME)
+
+STORAGES = {"default": "storages.backends.s3boto3.S3Boto3Storage"}
+
+# MEDIA URL 수정
+MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/'
