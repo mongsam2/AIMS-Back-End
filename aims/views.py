@@ -1,6 +1,9 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .models import Extraction, Summarization, InappropriateReason, Evaluation  
+
+# 모델 (데이터베이스)
+from .models import Extraction, Summarization, InappropriateReason, Evaluation 
+from documents.models import Document
 
 
 # Create your views here.

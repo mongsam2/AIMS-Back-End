@@ -141,5 +141,5 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # REST_FRAMEWORK
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',  # 기본 페이지네이션 클래스
-    'PAGE_SIZE': 10,  # 한 페이지에 표시할 항목 수
+    'PAGE_SIZE': 15,  # 한 페이지에 표시할 항목 수
 }
