@@ -2,6 +2,10 @@ from django.db import models
 from documents.models import Document
 
 # Create your models here.
+class Extraction(models.Model):
+    content = models.TextField()
+    document = models.ForeignKey(Document, on_delete=models.CASCADE)
+
 class InappropriateReason(models.Model):
     content = models.CharField(max_length=100)
     page = models.IntegerField()
