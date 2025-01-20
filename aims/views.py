@@ -7,7 +7,7 @@ from .models import Extraction, Summarization, InappropriateReason, Evaluation
 class ExtractionView(APIView):
     def post(self, request, document_id):
 
-
+        
         return Response({'message': '딕셔너리 형태로 응답'})
     
 class SummarizationView(APIView):
