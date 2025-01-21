@@ -9,6 +9,9 @@ from documents.models import Document
 
 from django.conf import settings
 import requests
+from dotenv import load_dotenv
+import os
+load_dotenv()
 
 # Create your views here.
 def get_document_path(document_id):
@@ -19,7 +22,7 @@ def get_document_path(document_id):
     #file_path = 'http://127.0.0.1:8000'+document.file_url.url
     return document.file_url.path
 
-api_key = "up_i5WhoWFjRhUXflOznB9DLOMQLcG8n"
+api_key = os.environ.get('UPSTAGE_API_KEY')
 
 class ExtractionView(APIView):
     def post(self, request, document_id):
