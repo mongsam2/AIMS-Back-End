@@ -33,11 +33,12 @@ class ExtractionView(APIView):
         # upstage api
         with open(file_path, "rb") as file:
             files = {"document": file}
-            response = requests.post(url, headers=headers, files=files).json()
-        
-        Extraction.objects.create(content=response.get("text"), document_id=document_id)
-        
-        return Response({'message': '성공적으로 추출되었습니다.'})
+            response = requests.post(url, headers=headers, files=files)
+            if response.status_code == 200:
+                content = response.json()['text']
+                Extraction.objects.create(content=content, document_id=document_id)
+                return Response({'message': content})
+        return Response({"message": "처리 실패"}, 400)
     
 class SummarizationView(APIView):
     def post(self, request, document_id):
