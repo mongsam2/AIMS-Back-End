@@ -5,7 +5,7 @@ from rest_framework.exceptions import APIException
 from django.conf import settings
 import os
 
-PROMPT_PATH = os.path.join(settings.BASE_DIR, 'aims', 'utils', 'prompt.txt')
+PROMPT_PATH = os.path.join(settings.BASE_DIR, 'aims', 'utils', 'essay_prompt.txt')
 
 def essay(api_key, content):
     
