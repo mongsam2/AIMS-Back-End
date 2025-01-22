@@ -20,3 +20,8 @@ class Applicant(models.Model):
     application_type = models.CharField(max_length=50)
     active = models.BooleanField(default=True)
     student = models.ForeignKey('Student', on_delete=models.CASCADE)
+
+class ApplicationTypeChoices(models.TextChoices):
+    서류형 = '학생부종합전형(서류형)', '학생부종합전형(서류형)'
+    면접형 = '학생부종합전형(면접형)', '학생부종합전형(면접형)'
+    국방시스템특별전형 = '학생부종합전형(국방시스템특별전형)', '학생부종합전형(국방시스템특별전형)'
