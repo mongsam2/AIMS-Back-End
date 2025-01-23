@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import InappropriateReason, Evaluation, Summarization, Extraction
+from .models import InappropriateReason, Evaluation, Summarization, Extraction, EssayCriteria
 
 # Uitls
 class ShortContent:
@@ -18,6 +18,10 @@ class Inappropriate_ReasonAdmin(admin.ModelAdmin, ShortContent):
 @admin.register(Evaluation)
 class EvaluationAdmin(admin.ModelAdmin, ShortContent):
     list_display = ('document', 'short_content')
+
+@admin.register(EssayCriteria)
+class EssayCriteriaAdmin(admin.ModelAdmin, ShortContent):
+    list_display = ('short_content',)
 
 @admin.register(Summarization)
 class SummarizationAdmin(admin.ModelAdmin, ShortContent):
