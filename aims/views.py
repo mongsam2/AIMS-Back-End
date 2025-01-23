@@ -14,6 +14,8 @@ from django.conf import settings
 import requests
 import os
 
+from django.shortcuts import get_object_or_404
+
 # Create your views here.
 def get_document_path(document_id):
     try:
@@ -49,6 +51,8 @@ class SummarizationView(APIView):
         url = "https://api.upstage.ai/v1/document-ai/ocr"
         headers = {"Authorization": f"Bearer {api_key}"}
 
+        
+
         with open(file_path, "rb") as file:
             files = {"document": file}
             response = requests.post(url, headers=headers, files=files)
@@ -66,8 +70,8 @@ class SummarizationView(APIView):
                 pages_with_keywords = extract_pages_with_keywords(html_content)
                 parse_response = parse_selected_pages(file_path, pages_with_keywords)
                 solar_response = process_with_solar(parse_response)
-                print(solar_response)
-                
+                document = get_object_or_404(Document, id=document_id)
+                Summarization.objects.create(content=solar_response, document=document)
                 return Response({
                     'solar_response': solar_response
                     # 추천된 면접 질문 목록 추가 - 민솔
