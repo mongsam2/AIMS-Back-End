@@ -27,12 +27,12 @@ class Evaluation(models.Model):
     
 class EssayCriteria(models.Model):
     content = models.TextField()
-    ranges = models.ManyToManyField('EssayRange')
+    ranges = models.ManyToManyField('EvaluationRange')
     
     def __str__(self):
         return f"에세이 평가기준 {self.id}"
 
-class EssayRange(models.Model):
+class EvaluationRange(models.Model):
     min_value = models.IntegerField()
     max_value = models.IntegerField()
     penalty = models.IntegerField()
