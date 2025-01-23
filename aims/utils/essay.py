@@ -10,7 +10,7 @@ def essay(api_key, content, criteria):
         base_url="https://api.upstage.ai/v1/solar"
     )
 
-    # Load the prompt
+    # Load the prompt and criteria
     try:
         with open(PROMPT_PATHS[0], 'r', encoding='utf-8') as f1, \
              open(PROMPT_PATHS[1], 'r', encoding='utf-8') as f2:
@@ -19,6 +19,8 @@ def essay(api_key, content, criteria):
     except FileNotFoundError:
         raise APIException(f"Prompt file not found at path: {PROMPT_PATHS}")
 
+    rule = criteria.get("평가 내용", "")
+
     # Chat API
     try:
         stream = client.chat.completions.create(
@@ -26,7 +28,7 @@ def essay(api_key, content, criteria):
             messages=[
                 {
                     "role": "system",
-                    "content": prompt + criteria + prompt2
+                    "content": prompt + rule + prompt2
                 },
                 {
                     "role": "user",
