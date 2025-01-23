@@ -1,25 +1,32 @@
-# pip install openai
-from openai import OpenAI # openai==1.52.2
-
-from rest_framework.exceptions import APIException
-from django.conf import settings
 import os
 
-PROMPT_PATH = os.path.join(settings.BASE_DIR, 'aims', 'utils', 'essay_prompt.txt')
+from openai import OpenAI
+from django.conf import settings
+from rest_framework.exceptions import APIException
 
-def essay(api_key, content):
+PROMPT_PATHS = [
+    os.path.join(settings.BASE_DIR, 'aims', 'utils', 'prompt_txt', 'essay_prompt.txt'),
+    os.path.join(settings.BASE_DIR, 'aims', 'utils', 'prompt_txt', 'essay_prompt2.txt')
+]
+
+
+def summary_and_extract(api_key, content, criteria):
     
     client = OpenAI(
         api_key=api_key,
         base_url="https://api.upstage.ai/v1/solar"
     )
 
-    # Load the prompt
+    # Load the prompt and criteria
     try:
-        with open(PROMPT_PATH, 'r', encoding='utf-8') as f:
-            prompt = f.read()
+        with open(PROMPT_PATHS[0], 'r', encoding='utf-8') as f1, \
+             open(PROMPT_PATHS[1], 'r', encoding='utf-8') as f2:
+                prompt = f1.read()
+                prompt2 = f2.read()
     except FileNotFoundError:
-        raise APIException(f"Prompt file not found at path: {PROMPT_PATH}")
+        raise APIException(f"Prompt file not found at path: {PROMPT_PATHS}")
+
+    rule = criteria.get("평가 내용", "")
 
     # Chat API
     try:
@@ -28,10 +35,12 @@ def essay(api_key, content):
             messages=[
                 {
                     "role": "system",
-                    "content": prompt},
+                    "content": prompt + rule + prompt2
+                },
                 {
                     "role": "user",
-                    "content": content}
+                    "content": content
+                }
             ],
             stream=True,
             #temperature=0.2
@@ -39,9 +48,30 @@ def essay(api_key, content):
     except Exception as e:
         raise APIException(f"OpenAI API call failed: {str(e)}")
 
-    summary = ""
+    summary_extract = ""
     for chunk in stream:
         if chunk.choices[0].delta.content is not None:
-            summary += chunk.choices[0].delta.content
+            summary_extract += chunk.choices[0].delta.content
     
-    return summary
+    return summary_extract
+
+def first_evaluate(content, criteria):
+    # 글자 수 계산
+    char_cnt = len(content)
+    
+    # 글자 수 평가 기준 불러오기
+    penalty = None
+    for rule in criteria.get("분량", []):
+        if rule["min"] <= char_cnt and char_cnt < rule["max"]:
+            penalty = rule["penalty"]
+            break
+    
+    evaluate = f"\n\n{char_cnt}자 : "
+    if penalty == 0:
+        evaluate += "감점 없음"
+    elif penalty == None:
+        evaluate += "분량 미충족"
+    else:
+        evaluate += f"{penalty}점 감점"
+
+    return evaluate

@@ -11,10 +11,22 @@ from .serializers import DocumentSerializer, DocumentReasonsSerializer
 from aims.serializers import EvaluationSerializer, SummarizationSerializer
 from rest_framework.parsers import MultiPartParser, FormParser
 
+from rest_framework import status
+
 # Create your views here.
 class DocumentCreateView(generics.CreateAPIView):
     queryset = Document.objects.all()
     serializer_class = DocumentSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        instance = self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response({"document_id": instance.id}, status=status.HTTP_201_CREATED, headers=headers)
+
+    def perform_create(self, serializer):
+        return serializer.save()
 
 class DocumentListView(generics.ListAPIView):
     serializer_class = DocumentReasonsSerializer
