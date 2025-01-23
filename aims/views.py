@@ -137,7 +137,7 @@ class EvaluationView(APIView):
             raise NotFound(f"Document for document ID {document_id} is not found.")
         
         extraction = extract_text(document_id)
-        content = extraction.content
+        content = extraction
         
         # 논술 OCR 내용인 content를 가지고 요약문 및 추출문 갖고오기
         # content의 글자 수 기반으로 1차 채점하기
