@@ -27,9 +27,19 @@ class Evaluation(models.Model):
     
 class EssayCriteria(models.Model):
     content = models.TextField()
+    ranges = models.ManyToManyField('EssayRange')
     
     def __str__(self):
-        return f"에세이 기준 {self.id}"
+        return f"에세이 평가기준 {self.id}"
+
+class EssayRange(models.Model):
+    min_value = models.IntegerField()
+    max_value = models.IntegerField()
+    penalty = models.IntegerField()
+
+    def __str__(self):
+        return f"{self.min_value} ~ {self.max_value}: penalty:{self.penalty}점"
+
 
 class Summarization(models.Model):
     content = models.TextField(null=True, blank=True, default='')
