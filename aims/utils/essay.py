@@ -59,12 +59,12 @@ def first_evaluate(content, criteria):
             penalty = rule["penalty"]
             break
     
-    evaluate = ""
+    evaluate = f"{char_cnt}자 : "
     if penalty == 0:
-        evaluate = "감점 없음"
+        evaluate += "감점 없음"
     elif penalty == None:
-        evaluate = "분량 미충족"
+        evaluate += "분량 미충족"
     else:
-        evaluate = f"{penalty}점 감점"
+        evaluate += f"{penalty}점 감점"
 
     return evaluate
