@@ -24,6 +24,12 @@ class Evaluation(models.Model):
 
     def __str__(self):
         return f"{self.document} 평가"
+    
+class EssayCriteria(models.Model):
+    content = models.TextField()
+    
+    def __str__(self):
+        return f"에세이 기준 {self.id}"
 
 class Summarization(models.Model):
     content = models.TextField()
