@@ -1,6 +1,6 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.exceptions import NotFound
+from rest_framework.exceptions import NotFound, APIException
 
 # 모델 (데이터베이스)
 from .models import Extraction, Summarization, InappropriateReason, Evaluation 
@@ -12,6 +12,8 @@ import requests
 from dotenv import load_dotenv
 import os
 load_dotenv()
+
+from .utils.essay import essay
 
 # Create your views here.
 def get_document_path(document_id):
@@ -54,6 +56,24 @@ class ReasonView(APIView):
 
 class EvaluationView(APIView):
     def post(self, request, document_id):
-        file_path = get_document_path(document_id)
+        # Extraction DB로부터 OCR 결과인 content를 갖고오기
+        try:
+            document = Document.objects.get(id=document_id)
+        except Document.DoesNotExist:
+            raise NotFound(f"Document for document ID {document_id} is not found.")
         
-        return Response({'message': file_path})
+        try:
+            extraction = Extraction.objects.get(document=document)
+            content = extraction.content
+        except Extraction.DoesNotExist:
+            raise NotFound(f"Extraction record for Document is not found.")
+        
+        # 논술 OCR 내용인 content를 가지고 요약문 및 추출문 갖고오기
+        try:
+            summary = essay(api_key, content)
+        except Exception as e:
+            raise APIException(f"Error during summarization: {str(e)}")
+
+        Evaluation.objects.create(content=summary, document=document)
+
+        return Response({'message': 'Summarization successful', 'summary': summary})
