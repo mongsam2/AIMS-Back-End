@@ -8,7 +8,6 @@ from documents.models import Document
 from rest_framework.exceptions import APIException
 
 from .utils.summarization import txt_to_html, extract_pages_with_keywords, parse_selected_pages, process_with_solar
-from .utils.essay import essay
 
 from django.conf import settings
 import requests
@@ -104,7 +103,7 @@ class EvaluationView(APIView):
         # 논술 OCR 내용인 content를 가지고 요약문 및 추출문 갖고오기
         # content의 글자 수 기반으로 1차 채점하기
         try:
-            criteria = None # criteria 갖고 오기
+            criteria = dict() # criteria 갖고 오기
             summary = summary_and_extract(api_key, content, criteria)
             evaluate = first_evaluate(content, criteria)
         except Exception as e:
