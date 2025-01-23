@@ -2,6 +2,7 @@ import requests
 import json
 import os
 from openai import OpenAI
+from django.conf import settings
 
 api_key = os.environ.get('UPSTAGE_API_KEY')
 
@@ -57,8 +58,8 @@ def process_with_solar(parse_response):
         api_key=api_key,
         base_url="https://api.upstage.ai/v1/solar"
     )
-
-    with open('/Users/jaehyo/Desktop/ipsi/upstage/student_record_prompt.txt', 'r', encoding='utf-8') as file:
+    prompt_file = os.path.join(settings.BASE_DIR, 'aims', 'utils', 'student_record_prompt.txt')  
+    with open(prompt_file, 'r', encoding='utf-8') as file:
         prompt_content = file.read()
 
     parse_text = json.dumps(parse_response, ensure_ascii=False, indent=4)
