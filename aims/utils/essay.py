@@ -1,7 +1,7 @@
 from openai import OpenAI
 from rest_framework.exceptions import APIException
 
-PROMPT_PATHS = ['./essay_prompt.txt', './essay_prompt2.txt']
+PROMPT_PATHS = ['/root/backend/aims/utils/prompt_txt/essay_prompt.txt', '/root/backend/aims/utils/prompt_txt/essay_prompt2.txt']
 
 def essay(api_key, content, criteria):
     
