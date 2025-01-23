@@ -13,6 +13,7 @@ from .utils.essay import essay
 from django.conf import settings
 import requests
 import os
+from openai import OpenAI
 
 from django.shortcuts import get_object_or_404
 
@@ -45,13 +46,11 @@ class ExtractionView(APIView):
     
 class SummarizationView(APIView):
     def post(self, request, document_id):
-        file_path = get_document_path(document_id)
+        '''file_path = get_document_path(document_id)
 
          # OCR API 호출
         url = "https://api.upstage.ai/v1/document-ai/ocr"
         headers = {"Authorization": f"Bearer {api_key}"}
-
-        
 
         with open(file_path, "rb") as file:
             files = {"document": file}
@@ -61,24 +60,49 @@ class SummarizationView(APIView):
                 output_data = response.json()
                 pages = output_data.get("pages", [])
                 page_texts = [page.get("text", "") for page in pages]
+        '''
                 
                # 민솔이는  page_texts(ocr에서 Text 추출한 값) 이 값을 사용하면 됩니다 !
-               
+            
                # 추천면접질문 로직 추가 - 민솔
-               
-                html_content = txt_to_html(page_texts)
-                pages_with_keywords = extract_pages_with_keywords(html_content)
-                parse_response = parse_selected_pages(file_path, pages_with_keywords)
-                solar_response = process_with_solar(parse_response)
-                document = get_object_or_404(Document, id=document_id)
-                Summarization.objects.create(content=solar_response, document=document)
-                return Response({
-                    'solar_response': solar_response
-                    # 추천된 면접 질문 목록 추가 - 민솔
-                })
-            else:
-                return Response({'error': 'OCR 처리 실패'}, status=response.status_code)
-
+            
+        '''html_content = txt_to_html(page_texts)
+        pages_with_keywords = extract_pages_with_keywords(html_content)
+        parse_response = parse_selected_pages(file_path, pages_with_keywords)
+        solar_response = process_with_solar(parse_response)'''
+            
+        document = get_object_or_404(Document, id=document_id)
+        extraction = get_object_or_404(Extraction, document=document)
+        client = OpenAI(
+            api_key=api_key,
+            base_url="https://api.upstage.ai/v1/solar"
+        )
+        prompt_file = os.path.join(settings.BASE_DIR, 'aims', 'utils', 'student_record_prompt.txt')  
+        with open(prompt_file, 'r', encoding='utf-8') as file:
+            prompt_content = file.read()
+        parse_text = extraction.content
+        stream = client.chat.completions.create(
+            model="solar-pro",
+            messages=[
+                {
+                    "role": "system",
+                    "content": prompt_content
+                },
+                {
+                    "role": "user",
+                    "content": parse_text
+                }
+            ],
+            stream=False,
+        )
+        
+        solar_response = stream.choices[0].message.content 
+        Summarization.objects.create(content=solar_response, document=document)
+        return Response({
+            'solar_response': solar_response
+            # 추천된 면접 질문 목록 추가 - 민솔
+        })
+    
 class ReasonView(APIView):
     def post(self, request, document_id):
         file_path = get_document_path(document_id)
