@@ -3,7 +3,7 @@ from rest_framework.exceptions import APIException
 
 PROMPT_PATHS = ['/root/backend/aims/utils/prompt_txt/essay_prompt.txt', '/root/backend/aims/utils/prompt_txt/essay_prompt2.txt']
 
-def essay(api_key, content, criteria):
+def summary_and_extract(api_key, content, criteria):
     
     client = OpenAI(
         api_key=api_key,

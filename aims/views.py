@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 import os
 load_dotenv()
 
-from .utils.essay import essay
+from .utils.essay import summary_and_extract, first_evaluate
 
 # Create your views here.
 def get_document_path(document_id):
@@ -69,11 +69,15 @@ class EvaluationView(APIView):
             raise NotFound(f"Extraction record for Document is not found.")
         
         # 논술 OCR 내용인 content를 가지고 요약문 및 추출문 갖고오기
+        # content의 글자 수 기반으로 1차 채점하기
         try:
-            summary = essay(api_key, content)
+            criteria = None # criteria 갖고 오기
+            summary = summary_and_extract(api_key, content, criteria)
+            evaluate = first_evaluate(content, criteria)
         except Exception as e:
             raise APIException(f"Error during summarization: {str(e)}")
 
+        rule = criteria.get("평가 내용", "")
         Evaluation.objects.create(content=summary, document=document)
 
-        return Response({'message': 'Summarization successful', 'summary': summary})
+        return Response({'message': 'Summarization successful', 'summary': summary + evaluate, 'evaluate': rule})
