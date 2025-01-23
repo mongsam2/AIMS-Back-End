@@ -1,6 +1,6 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.exceptions import NotFound
+from rest_framework.exceptions import NotFound, APIException
 
 # 모델 (데이터베이스)
 from .models import Extraction, Summarization, InappropriateReason, Evaluation 
@@ -15,6 +15,8 @@ import requests
 import os
 
 from django.shortcuts import get_object_or_404
+
+from .utils.essay import summary_and_extract, first_evaluate
 
 # Create your views here.
 def get_document_path(document_id):
@@ -91,19 +93,24 @@ class EvaluationView(APIView):
         try:
             document = Document.objects.get(id=document_id)
         except Document.DoesNotExist:
-            raise NotFound(f"해당 id의 document가 없습니다")
+            raise NotFound(f"Document for document ID {document_id} is not found.")
         
         try:
             extraction = Extraction.objects.get(document=document)
             content = extraction.content
         except Extraction.DoesNotExist:
-            raise NotFound(f"extraction 가져오기 실패")
+            raise NotFound(f"Extraction record for Document is not found.")
         
         # 논술 OCR 내용인 content를 가지고 요약문 및 추출문 갖고오기
+        # content의 글자 수 기반으로 1차 채점하기
         try:
-            summary = essay(api_key, content)
+            criteria = None # criteria 갖고 오기
+            summary = summary_and_extract(api_key, content, criteria)
+            evaluate = first_evaluate(content, criteria)
         except Exception as e:
             raise APIException(f"Error during summarization: {str(e)}")
-        
+
+        rule = criteria.get("평가 내용", "")
         Evaluation.objects.create(content=summary, document=document)
-        return Response({'message': 'Summarization successful', 'summary': summary})
+
+        return Response({'message': 'Summarization successful', 'summary': summary + evaluate, 'evaluate': rule})
