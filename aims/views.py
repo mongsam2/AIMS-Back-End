@@ -62,6 +62,7 @@ class ExtractionView(APIView):
     
 class SummarizationView(APIView):
     def post(self, request, document_id):
+        # LLM 길이 초과 문제 해결
         '''file_path = get_document_path(document_id)
 
          # OCR API 호출
