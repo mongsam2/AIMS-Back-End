@@ -8,7 +8,7 @@ from .models import Document
 from aims.models import Summarization, Evaluation
 
 from .serializers import DocumentSerializer, DocumentReasonsSerializer
-from aims.serializers import EvaluationSerializer, SummarizationSerializer
+from aims.serializers import EvaluationSerializer, SummarizationSerializer, EssayCriteriaSerializer
 from rest_framework.parsers import MultiPartParser, FormParser
 
 from rest_framework import status
@@ -75,3 +75,15 @@ class EssayDetailView(generics.RetrieveUpdateAPIView):
         except Evaluation.DoesNotExist:
             raise NotFound(f"{essay_id}: 해당 id의 논술 평가본을 찾을 수 없습니다.")
         return evaluation
+
+class EssayCriteriaView(generics.RetrieveAPIView):
+    serializer_class = EssayCriteriaSerializer
+
+    def get_object(self):
+        essay_id = self.kwargs.get('essay_id')
+        try:
+            document = Document.objects.get(id=essay_id)
+        except Evaluation.DoesNotExist:
+            raise NotFound(f"{essay_id}: 해당 id의 논술 파일일을 찾을 수 없습니다.")
+        criteria = document.criteria
+        return criteria
