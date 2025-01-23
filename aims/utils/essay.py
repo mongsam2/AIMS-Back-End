@@ -43,3 +43,24 @@ def essay(api_key, content):
             summary_extract += chunk.choices[0].delta.content
     
     return summary_extract
+
+def first_evaluate(content, criteria):
+    # 글자 수 계산
+    char_cnt = len(content)
+    
+    # 글자 수 평가 기준 불러오기
+    penalty = None
+    for rule in criteria.get("분량", []):
+        if rule["min"] <= char_cnt and char_cnt < rule["max"]:
+            penalty = rule["penalty"]
+            break
+    
+    evaluate = ""
+    if penalty == 0:
+        evaluate = "감점 없음"
+    elif penalty == None:
+        evaluate = "분량 미충족"
+    else:
+        evaluate = f"{penalty}점 감점"
+
+    return evaluate
