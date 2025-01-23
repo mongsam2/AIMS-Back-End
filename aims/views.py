@@ -95,7 +95,7 @@ class SummarizationView(APIView):
         prompt_file = os.path.join(settings.BASE_DIR, 'aims', 'utils', 'student_record_prompt.txt')  
         with open(prompt_file, 'r', encoding='utf-8') as file:
             prompt_content = file.read()
-        parse_text = extraction.content
+        parse_text = extraction
         stream = client.chat.completions.create(
             model="solar-pro",
             messages=[
