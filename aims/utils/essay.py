@@ -1,9 +1,9 @@
 from openai import OpenAI
 from rest_framework.exceptions import APIException
 
-PROMPT_PATH = './essay_prompt.txt'
+PROMPT_PATHS = ['./essay_prompt.txt', './essay_prompt2.txt']
 
-def essay(api_key, content):
+def essay(api_key, content, criteria):
     
     client = OpenAI(
         api_key=api_key,
@@ -12,10 +12,12 @@ def essay(api_key, content):
 
     # Load the prompt
     try:
-        with open(PROMPT_PATH, 'r', encoding='utf-8') as f:
-            prompt = f.read()
+        with open(PROMPT_PATHS[0], 'r', encoding='utf-8') as f1, \
+             open(PROMPT_PATHS[1], 'r', encoding='utf-8') as f2:
+                prompt = f1.read()
+                prompt2 = f2.read()
     except FileNotFoundError:
-        raise APIException(f"Prompt file not found at path: {PROMPT_PATH}")
+        raise APIException(f"Prompt file not found at path: {PROMPT_PATHS}")
 
     # Chat API
     try:
@@ -24,7 +26,7 @@ def essay(api_key, content):
             messages=[
                 {
                     "role": "system",
-                    "content": prompt
+                    "content": prompt + criteria + prompt2
                 },
                 {
                     "role": "user",
