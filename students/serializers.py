@@ -14,12 +14,15 @@ class StudentListSerializer(ModelSerializer):
         return obj.department.department
     
     def get_documents(self, obj):
-        ans = dict()
+        ans = list()
         documents = obj.documents.all()
         for document_type in DocumentTypeChoices.values:
             document_list = documents.filter(document_type=document_type).order_by('-upload_date')
             if not document_list:
-                ans[document_type] = DocumentStateChoices.미제출
+                ans.append({"document_type": document_type, "status":DocumentStateChoices.미제출, "id":None})
             else:
-                ans[document_type] = document_list[0].state if document_list[0].state else DocumentStateChoices.미제출
+                ans.append({"document_type":document_type, 
+                            "status":document_list[0].state if document_list[0].state else DocumentStateChoices.미제출, 
+                            "id":document_list[0].id
+                            })
         return ans

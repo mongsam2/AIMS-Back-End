@@ -1,7 +1,14 @@
+import os
+
 from openai import OpenAI
+from django.conf import settings
 from rest_framework.exceptions import APIException
 
-PROMPT_PATHS = ['/root/backend/aims/utils/prompt_txt/essay_prompt.txt', '/root/backend/aims/utils/prompt_txt/essay_prompt2.txt']
+PROMPT_PATHS = [
+    os.path.join(settings.BASE_DIR, 'aims', 'utils', 'prompt_txt', 'essay_prompt.txt'),
+    os.path.join(settings.BASE_DIR, 'aims', 'utils', 'prompt_txt', 'essay_prompt2.txt')
+]
+
 
 def summary_and_extract(api_key, content, criteria):
     
@@ -59,7 +66,7 @@ def first_evaluate(content, criteria):
             penalty = rule["penalty"]
             break
     
-    evaluate = f"{char_cnt}자 : "
+    evaluate = f"\n\n{char_cnt}자 : "
     if penalty == 0:
         evaluate += "감점 없음"
     elif penalty == None:

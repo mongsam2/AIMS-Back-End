@@ -5,13 +5,16 @@ from rest_framework.exceptions import NotFound, APIException
 # 모델 (데이터베이스)
 from .models import Extraction, Summarization, InappropriateReason, Evaluation 
 from documents.models import Document
+from rest_framework.exceptions import APIException
 
+from .utils.summarization import txt_to_html, extract_pages_with_keywords, parse_selected_pages, process_with_solar
+from .utils.essay import essay
 
 from django.conf import settings
 import requests
-from dotenv import load_dotenv
 import os
-load_dotenv()
+
+from django.shortcuts import get_object_or_404
 
 from .utils.essay import summary_and_extract, first_evaluate
 
@@ -45,8 +48,38 @@ class ExtractionView(APIView):
 class SummarizationView(APIView):
     def post(self, request, document_id):
         file_path = get_document_path(document_id)
+
+         # OCR API 호출
+        url = "https://api.upstage.ai/v1/document-ai/ocr"
+        headers = {"Authorization": f"Bearer {api_key}"}
+
         
-        return Response({'message': file_path})
+
+        with open(file_path, "rb") as file:
+            files = {"document": file}
+            response = requests.post(url, headers=headers, files=files)
+            
+            if response.status_code == 200:
+                output_data = response.json()
+                pages = output_data.get("pages", [])
+                page_texts = [page.get("text", "") for page in pages]
+                
+               # 민솔이는  page_texts(ocr에서 Text 추출한 값) 이 값을 사용하면 됩니다 !
+               
+               # 추천면접질문 로직 추가 - 민솔
+               
+                html_content = txt_to_html(page_texts)
+                pages_with_keywords = extract_pages_with_keywords(html_content)
+                parse_response = parse_selected_pages(file_path, pages_with_keywords)
+                solar_response = process_with_solar(parse_response)
+                document = get_object_or_404(Document, id=document_id)
+                Summarization.objects.create(content=solar_response, document=document)
+                return Response({
+                    'solar_response': solar_response
+                    # 추천된 면접 질문 목록 추가 - 민솔
+                })
+            else:
+                return Response({'error': 'OCR 처리 실패'}, status=response.status_code)
 
 class ReasonView(APIView):
     def post(self, request, document_id):

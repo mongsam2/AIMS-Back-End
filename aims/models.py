@@ -24,10 +24,16 @@ class Evaluation(models.Model):
 
     def __str__(self):
         return f"{self.document} 평가"
+    
+class EssayCriteria(models.Model):
+    content = models.TextField()
+    
+    def __str__(self):
+        return f"에세이 기준 {self.id}"
 
 class Summarization(models.Model):
-    content = models.TextField()
-    question = models.TextField()
+    content = models.TextField(null=True, blank=True, default='')
+    question = models.TextField(null=True, blank=True, default='')
     document = models.ForeignKey(Document, on_delete=models.CASCADE)
     memo = models.TextField(null=True, blank=True, default='')
 
