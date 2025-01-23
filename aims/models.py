@@ -32,8 +32,8 @@ class EssayCriteria(models.Model):
         return f"에세이 기준 {self.id}"
 
 class Summarization(models.Model):
-    content = models.TextField()
-    question = models.TextField()
+    content = models.TextField(null=True, blank=True, default='')
+    question = models.TextField(null=True, blank=True, default='')
     document = models.ForeignKey(Document, on_delete=models.CASCADE)
     memo = models.TextField(null=True, blank=True, default='')
 
