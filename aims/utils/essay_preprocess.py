@@ -24,7 +24,6 @@ def pdf_to_images(pdf_path, output_folder="temp_images"):
     pdf_doc.close()
     return image_paths
 
-
 def rotate_and_crop(image_path, output_path):
     """
     이미지를 주어진 각도로 회전하고 원고지 영역만 crop
@@ -39,7 +38,6 @@ def rotate_and_crop(image_path, output_path):
     crop_img = rotate_img.crop((54, 1050, 3430, 4810)) # 원고지 있는 구역만 crop -> 예외 생각해야 함
 
     crop_img.save(output_path)
-
 
 def preprocess_pdf(pdf_path, output_pdf_path):
     """

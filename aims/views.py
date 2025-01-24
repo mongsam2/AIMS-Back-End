@@ -1,24 +1,23 @@
-from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.response import Response
 from rest_framework.exceptions import NotFound, APIException
 
 # 모델 (데이터베이스)
-from .models import Extraction, Summarization, InappropriateReason, Evaluation 
-from documents.models import Document
-from rest_framework.exceptions import APIException
+from .models import Document, Extraction, Summarization, InappropriateReason, Evaluation
 
-from .utils.summarization import txt_to_html, extract_pages_with_keywords, parse_selected_pages, process_with_solar
-
-from django.conf import settings
-import requests
 import os
+import requests
 from openai import OpenAI
+from django.conf import settings
+from tempfile import NamedTemporaryFile
 
 from django.shortcuts import get_object_or_404
 
 from .utils.essay import summary_and_extract, first_evaluate
 from .utils.essay_preprocess import preprocess_pdf
-from tempfile import NamedTemporaryFile
+
+from .utils.summarization import txt_to_html, extract_pages_with_keywords, parse_selected_pages, process_with_solar
+
 
 # Create your views here.
 def get_document_path_and_type(document_id):

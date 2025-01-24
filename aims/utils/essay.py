@@ -4,6 +4,7 @@ from openai import OpenAI
 from django.conf import settings
 from rest_framework.exceptions import APIException
 
+
 PROMPT_PATHS = [
     os.path.join(settings.BASE_DIR, 'aims', 'utils', 'prompt_txt', 'essay_prompt.txt'),
     os.path.join(settings.BASE_DIR, 'aims', 'utils', 'prompt_txt', 'essay_prompt2.txt')
