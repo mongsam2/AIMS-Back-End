@@ -20,7 +20,7 @@ class Document(models.Model):
     document_type = models.CharField(max_length=50)
     student = models.ForeignKey('students.Student', on_delete=models.CASCADE, related_name='documents')
     upload_date = models.DateTimeField(auto_now_add=True)
-    state = models.CharField(max_length=10, choices=DocumentStateChoices.choices, default=DocumentStateChoices.미제출)
+    state = models.CharField(max_length=10, choices=DocumentStateChoices.choices, default=DocumentStateChoices.제출)
     criteria = models.ForeignKey('aims.EssayCriteria', on_delete=models.CASCADE, null=True, blank=True)
 
     def upload_to(self, filename):

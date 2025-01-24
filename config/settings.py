@@ -153,3 +153,6 @@ REST_FRAMEWORK = {
 
 # Cors
 CORS_ORIGIN_ALLOW_ALL = True
+
+# Clickjacking
+X_FRAME_OPTIONS = 'ALLOWALL'
