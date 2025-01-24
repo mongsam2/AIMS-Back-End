@@ -21,6 +21,7 @@ class InappropriateReason(models.Model):
 class Evaluation(models.Model):
     content = models.TextField()
     document = models.ForeignKey(Document, on_delete=models.CASCADE)    
+    memo = models.TextField(null=True, blank=True, default='')
 
     def __str__(self):
         return f"{self.document} 평가"

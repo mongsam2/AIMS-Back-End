@@ -147,9 +147,9 @@ class EvaluationView(APIView):
             summary = summary_and_extract(api_key, content, criteria)
             evaluate = first_evaluate(content, criteria)
         except Exception as e:
-            raise APIException(f"Error during summarization: {str(e)}")
+            raise APIException(f"Error during summarization and evaluation: {str(e)}")
 
-        rule = criteria.get("평가 내용", "")
-        Evaluation.objects.create(content=summary, document=document)
+        rule = f'\n\n{criteria.get("평가 내용", "")}'
+        Evaluation.objects.create(content=summary, document=document, memo=evaluate+rule)
 
-        return Response({'message': 'Summarization successful', 'summary': summary + evaluate, 'evaluate': rule})
+        return Response({'message': 'Summarization successful', 'summary': summary, 'evaluate': evaluate+rule})
