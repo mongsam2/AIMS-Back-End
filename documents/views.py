@@ -15,7 +15,6 @@ from rest_framework import status
 
 # Create your views here.
 class DocumentCreateView(generics.CreateAPIView):
-    queryset = Document.objects.all()
     serializer_class = DocumentSerializer
 
     def create(self, request, *args, **kwargs):
