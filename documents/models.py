@@ -17,7 +17,7 @@ class DocumentStateChoices(models.TextChoices):
     제출 = '제출', '제출' 
 
 class Document(models.Model):
-    document_type = models.CharField(max_length=50)
+    document_type = models.CharField(max_length=50, choices=DocumentTypeChoices.choices)
     student = models.ForeignKey('students.Student', on_delete=models.CASCADE, related_name='documents')
     upload_date = models.DateTimeField(auto_now_add=True)
     state = models.CharField(max_length=10, choices=DocumentStateChoices.choices, default=DocumentStateChoices.제출)
@@ -30,3 +30,6 @@ class Document(models.Model):
 
     def __str__(self):
         return f"{self.student}의 {self.document_type}({self.state})"
+
+class DocumentType(models.Model):
+    name = models.CharField(max_length=50, primary_key=True)
