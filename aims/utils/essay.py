@@ -66,7 +66,7 @@ def first_evaluate(content, criteria):
             penalty = rule["penalty"]
             break
     
-    evaluate = f"\n\n{char_cnt}자 : "
+    evaluate = f"{char_cnt}자 : "
     if penalty == 0:
         evaluate += "감점 없음"
     elif penalty == None:
