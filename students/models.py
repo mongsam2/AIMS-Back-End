@@ -8,6 +8,7 @@ class Student(models.Model):
     department = models.ForeignKey('Department', on_delete=models.CASCADE)
     phone = models.CharField(max_length=11)
     required_documents = models.ManyToManyField(DocumentType, related_name='students')
+    applicant_type = models.ForeignKey('ApplicantType', on_delete=models.CASCADE, null=True, blank=True)
     
 
     def __str__(self):
@@ -19,6 +20,11 @@ class Department(models.Model):
     def __str__(self):
         return self.department
 
+class ApplicantType(models.Model):
+    name = models.CharField(max_length=50, primary_key=True)
+
+
+# 현재는 사용하지 않음  ------------------------------------------------------------------------------
 class Applicant(models.Model):
     application_type = models.CharField(max_length=50)
     active = models.BooleanField(default=True)
