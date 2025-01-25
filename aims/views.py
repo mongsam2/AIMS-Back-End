@@ -16,8 +16,8 @@ import os
 from django.shortcuts import get_object_or_404
 from .utils.essay import summary_and_extract, first_evaluate
 
-from utils.ocr_execute import execute_ocr
-from utils.solar_execute import get_answer_from_solar
+from utils.execute_ocr import execute_ocr
+from utils.execute_solar import get_answer_from_solar
 
 
 API_KEY = os.environ.get('UPSTAGE_API_KEY')
@@ -51,8 +51,8 @@ class SummarizationView(APIView):
             
         '''html_content = txt_to_html(page_texts)
         pages_with_keywords = extract_pages_with_keywords(html_content)
-        parse_response = parse_selected_pages(file_path, pages_with_keywords)
-        solar_response = process_with_solar(parse_response)'''
+        parse_response = parse_selected_pages(API_KEY, file_path, pages_with_keywords)
+        solar_response = process_with_solar(API_KEY, parse_response)'''
 
         extraction = execute_ocr(API_KEY, file_path)
 
