@@ -3,26 +3,26 @@ from rest_framework.views import APIView
 from rest_framework.exceptions import NotFound, APIException
 
 # 모델 (데이터베이스)
-from .models import Extraction, Summarization, InappropriateReason, Evaluation 
+from aims.models import Extraction, Summarization, InappropriateReason, Evaluation 
 from documents.models import Document
 from rest_framework.exceptions import APIException
 
-from .utils.summarization import txt_to_html, extract_pages_with_keywords, parse_selected_pages, process_with_solar
+from aims.utils.summarization import txt_to_html, extract_pages_with_keywords, process_with_solar
 
 from django.conf import settings
 import requests
 import os
 
 from django.shortcuts import get_object_or_404
-from .utils.essay import summary_and_extract, first_evaluate
+from aims.utils.essay import summary_and_extract, first_evaluate
 
-from utils.execute_ocr import execute_ocr
-from utils.execute_solar import get_answer_from_solar
+from aims.utils.execute_ocr import execute_ocr
+from aims.utils.execute_solar import get_answer_from_solar
 
 
 API_KEY = os.environ.get('UPSTAGE_API_KEY')
 
-# Create your views here.
+
 def get_document_path(document_id):
     try:
         document = Document.objects.get(id=document_id)
@@ -35,7 +35,7 @@ def get_document_path(document_id):
 class ExtractionView(APIView):
     def post(self, request, document_id):
         file_path = get_document_path(document_id)
-        
+
         content = execute_ocr(API_KEY, file_path)
         Extraction.objects.create(content=content, document_id=document_id)
 
@@ -59,8 +59,11 @@ class SummarizationView(APIView):
         parse_response = parse_selected_pages(API_KEY, file_path, pages_with_keywords)
         solar_response = process_with_solar(API_KEY, parse_response)
         '''
-        # TODO - from yejin : 이거 왜 ocr을 수행하는지? 
-        extraction = execute_ocr(API_KEY, file_path)
+        # TODO - from yejin : 이거 왜 ocr을 수행하는지? 파일이 업로드 되면 extraction에 ocr 결과가 저장됨 -> Extraction에서 content를 불러와서 쓰면 됨
+        #extraction = execute_ocr(API_KEY, file_path)
+
+        # Extraction을 가져와 solar로 prompting한 결과를 response에 저장
+        extraction = Extraction.objects.get(id=document_id)
 
         prompt_file = os.path.join(settings.BASE_DIR, 'aims', 'utils', 'student_record_prompt.txt')  
         
@@ -68,12 +71,15 @@ class SummarizationView(APIView):
             prompt_content = file.read()
         
         response = get_answer_from_solar(API_KEY, extraction, prompt_content)
+
+        # TODO - from yejin : 갑자기 document 왜 불러오는지?
         try:
             document = Document.objects.get(id=document_id)
         except Document.DoesNotExist:
             raise NotFound(f"Document for document ID {document_id} is not found.")
         
         Summarization.objects.create(content=response, document=document)
+
         return Response({
             'solar_response': response
             # 추천된 면접 질문 목록 추가 - 민솔
