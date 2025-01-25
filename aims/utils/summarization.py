@@ -1,10 +1,10 @@
-import requests
-import json
 import os
-from openai import OpenAI
+import json
+
 from django.conf import settings
 
-api_key = os.environ.get('UPSTAGE_API_KEY')
+from utils.execute_solar import get_answer_from_solar
+
 
 def txt_to_html(page_texts):
     html_content = []
@@ -37,46 +37,14 @@ def extract_pages_with_keywords(html_content):
 
     return sorted(list(pages_with_keywords))
 
-def parse_selected_pages(file_path, pages):
-    url = "https://api.upstage.ai/v1/document-ai/document-parse"
-    headers = {"Authorization": f"Bearer {api_key}"}
-    
-    page_numbers = ','.join(map(str, pages))
-    data = {"ocr": "force", "base64_encoding": '["table"]', "pages": page_numbers}
-    
-    with open(file_path, "rb") as file:
-        files = {"document": file}
-        response = requests.post(url, headers=headers, files=files, data=data)
-        
-        if response.status_code == 200:
-            return response.json()
-        else:
-            return {'error': 'PDF 파싱 실패', 'status_code': response.status_code}
 
-def process_with_solar(parse_response):
-    client = OpenAI(
-        api_key=api_key,
-        base_url="https://api.upstage.ai/v1/solar"
-    )
+def process_with_solar(api_key, parse_response):
     prompt_file = os.path.join(settings.BASE_DIR, 'aims', 'utils', 'student_record_prompt.txt')  
+    
     with open(prompt_file, 'r', encoding='utf-8') as file:
         prompt_content = file.read()
 
     parse_text = json.dumps(parse_response, ensure_ascii=False, indent=4)
-
-    stream = client.chat.completions.create(
-        model="solar-pro",
-        messages=[
-            {
-                "role": "system",
-                "content": prompt_content
-            },
-            {
-                "role": "user",
-                "content": parse_text
-            }
-        ],
-        stream=False,
-    )
+    response = get_answer_from_solar(api_key, parse_text, prompt_content)
     
-    return stream.choices[0].message.content 
+    return response
