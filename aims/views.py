@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.exceptions import NotFound, APIException
 
 # 모델 (데이터베이스)
-from aims.models import Extraction, Summarization, InappropriateReason, Evaluation 
+from aims.models import Extraction, Summarization, DocumentPassFail, Evaluation 
 from documents.models import Document
 from rest_framework.exceptions import APIException
 
@@ -45,7 +45,7 @@ class ExtractionView(APIView):
 
 class SummarizationView(APIView):
     def post(self, request, document_id):
-        file_path = get_document_path(document_id)
+        reason = Extraction.objects.get(document_id=document_id)
         
         # LLM 길이 초과 문제 해결
                 
@@ -86,7 +86,7 @@ class SummarizationView(APIView):
         })
     
 
-class ReasonView(APIView):
+class DocumentPassFailView(APIView):
     def post(self, request, document_id):
         file_path = get_document_path(document_id)
         

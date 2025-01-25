@@ -7,14 +7,10 @@ class Extraction(models.Model):
     document = models.ForeignKey(Document, on_delete=models.CASCADE)
 
 
-class InappropriateReason(models.Model):
-    content = models.CharField(max_length=100)
+class DocumentPassFail(models.Model):
+    document_id = models.ForeignKey(Document, on_delete=models.CASCADE, related_name='reasons') 
     page = models.IntegerField()
-    x = models.IntegerField()
-    y = models.IntegerField()
-    width = models.IntegerField()
-    height = models.IntegerField()
-    document = models.ForeignKey(Document, on_delete=models.CASCADE, related_name='reasons') 
+    content = models.CharField(max_length=100)
 
     def __str__(self):
         return f"{self.document} 부적합 이유"
