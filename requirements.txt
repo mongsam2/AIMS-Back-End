@@ -36,3 +36,10 @@ sqlparse==0.5.3
 tqdm==4.67.1
 typing_extensions==4.12.2
 urllib3==2.3.0
+
+openai==1.52.2
+
+celery==5.4.0
+redis==5.2.1
+django-celery-results==2.5.1
+aioboto3>=9.4.1

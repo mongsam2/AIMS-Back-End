@@ -6,6 +6,7 @@ from students.models import Student
 from aims.serializers import ReasonsSerializer
 import os
 
+
 class DocumentSerializer(ModelSerializer):
     '''
     새로운 파일을 업로드할 때, 사용하는 Serializer
@@ -29,6 +30,7 @@ class DocumentSerializer(ModelSerializer):
         
         return value
 
+
     def create(self, validated_data):
         file_url = validated_data['file_url'].name
         file_name = os.path.basename(file_url)
@@ -38,10 +40,12 @@ class DocumentSerializer(ModelSerializer):
         document = Document.objects.create(student=student, document_type=document_type, file_url=validated_data['file_url'])
         return document
 
+
 class DocumentStatusSerializer(ModelSerializer):
     class Meta:
         model = Document
         fileds = ['state']
+
 
 class DocumentReasonsSerializer(ModelSerializer):
     reasons = ReasonsSerializer(many=True)
@@ -49,6 +53,7 @@ class DocumentReasonsSerializer(ModelSerializer):
     class Meta:
         model = Document
         fields = ['file_url', 'reasons']
+
 
 class StudentRecordsSerializer(ModelSerializer):
     class Meta:
