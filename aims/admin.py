@@ -15,7 +15,7 @@ class ExtractionAdmin(admin.ModelAdmin, ShortContent):
 
 @admin.register(DocumentPassFail)
 class Inappropriate_ReasonAdmin(admin.ModelAdmin, ShortContent):
-    list_display = ('document', 'short_content')
+    list_display = ('document_id', 'short_content')
 
 
 @admin.register(Evaluation)

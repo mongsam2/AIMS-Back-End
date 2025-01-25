@@ -2,21 +2,19 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import NotFound, APIException
 
+
 # 모델 (데이터베이스)
 from aims.models import Extraction, Summarization, DocumentPassFail, Evaluation 
 from documents.models import Document
 from rest_framework.exceptions import APIException
 
-from aims.utils.summarization import txt_to_html, extract_pages_with_keywords, process_with_solar
 
 from django.conf import settings
 import requests
 import os
 
-from django.shortcuts import get_object_or_404
 from aims.utils.essay import summary_and_extract, first_evaluate
 
-from aims.utils.execute_ocr import execute_ocr
 from aims.utils.execute_solar import get_answer_from_solar
 
 
@@ -24,8 +22,7 @@ API_KEY = os.environ.get('UPSTAGE_API_KEY')
 
 from .utils.essay import summary_and_extract, first_evaluate
 from .utils.essay_preprocess import preprocess_pdf
-
-from .utils.summarization import txt_to_html, extract_pages_with_keywords, parse_selected_pages, process_with_solar
+from django.core.files.temp import NamedTemporaryFile
 
 
 # Create your views here.
@@ -104,7 +101,6 @@ class ExtractionView(APIView):
 
 class SummarizationView(APIView):
     def post(self, request, document_id):
-        reason = Extraction.objects.get(document_id=document_id)
         
         # LLM 길이 초과 문제 해결
                 
@@ -122,7 +118,7 @@ class SummarizationView(APIView):
         #extraction = execute_ocr(API_KEY, file_path)
 
         # Extraction을 가져와 solar로 prompting한 결과를 response에 저장
-        extraction = Extraction.objects.get(id=document_id)
+        extraction = extract_text(document_id)
 
         prompt_file = os.path.join(settings.BASE_DIR, 'aims', 'utils', 'student_record_prompt.txt')  
         
