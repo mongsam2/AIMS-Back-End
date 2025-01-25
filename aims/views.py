@@ -35,8 +35,12 @@ def get_document_path(document_id):
 class ExtractionView(APIView):
     def post(self, request, document_id):
         file_path = get_document_path(document_id)
+        
         content = execute_ocr(API_KEY, file_path)
         Extraction.objects.create(content=content, document_id=document_id)
+
+        return Response({'message': content})
+
     
 
 class SummarizationView(APIView):
@@ -45,15 +49,17 @@ class SummarizationView(APIView):
         
         # LLM 길이 초과 문제 해결
                 
-               # 민솔이는  page_texts(ocr에서 Text 추출한 값) 이 값을 사용하면 됩니다 !
+            # 민솔이는  page_texts(ocr에서 Text 추출한 값) 이 값을 사용하면 됩니다 !
+        
+            # 추천면접질문 로직 추가 - 민솔
             
-               # 추천면접질문 로직 추가 - 민솔
-            
-        '''html_content = txt_to_html(page_texts)
+        '''
+        html_content = txt_to_html(page_texts)
         pages_with_keywords = extract_pages_with_keywords(html_content)
         parse_response = parse_selected_pages(API_KEY, file_path, pages_with_keywords)
-        solar_response = process_with_solar(API_KEY, parse_response)'''
-
+        solar_response = process_with_solar(API_KEY, parse_response)
+        '''
+        # TODO - from yejin : 이거 왜 ocr을 수행하는지? 
         extraction = execute_ocr(API_KEY, file_path)
 
         prompt_file = os.path.join(settings.BASE_DIR, 'aims', 'utils', 'student_record_prompt.txt')  
@@ -83,6 +89,7 @@ class ReasonView(APIView):
 
 class EvaluationView(APIView):
     def post(self, request, document_id):
+        # TODO - from yejin : 주석이랑 코드랑 일치하지 않음
         # Extraction DB로부터 OCR 결과인 content를 갖고오기
         try:
             document = Document.objects.get(id=document_id)
