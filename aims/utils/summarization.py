@@ -1,9 +1,9 @@
-import os
-import json
 
+import json
+import os
 from django.conf import settings
 
-from utils.execute_solar import get_answer_from_solar
+from aims.utils.execute_solar import get_answer_from_solar
 
 
 def txt_to_html(page_texts):
@@ -15,6 +15,7 @@ def txt_to_html(page_texts):
                 html_content.append(f'  <div>{line.strip()}</div>')
         html_content.append('</div>')
     return '\n'.join(html_content)
+
 
 def extract_pages_with_keywords(html_content):
     lines = html_content.split('\n')
