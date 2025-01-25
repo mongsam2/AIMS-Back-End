@@ -10,6 +10,7 @@ class DocumentTypeChoices(models.TextChoices):
     국민체력100인증서 = '국민체력100인증서', '국민체력100인증서'
     체력평가 = '체력평가', '체력평가'
     논술 = '논술', '논술'
+    알수없음 = '알수없음', '알수없음'
 
 
 class DocumentStateChoices(models.TextChoices):
