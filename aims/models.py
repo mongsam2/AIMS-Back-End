@@ -1,7 +1,7 @@
 from django.db import models
 from documents.models import Document
 
-# Create your models here.
+
 class Extraction(models.Model):
     content = models.TextField()
     document = models.ForeignKey(Document, on_delete=models.CASCADE)
@@ -27,14 +27,6 @@ class Evaluation(models.Model):
 
     def __str__(self):
         return f"{self.document} 평가"
-    
-
-class EssayCriteria(models.Model):
-    content = models.TextField()
-    ranges = models.ManyToManyField('EvaluationRange')
-    
-    def __str__(self):
-        return f"에세이 평가기준 {self.id}"
 
 
 class EvaluationRange(models.Model):
@@ -54,6 +46,18 @@ class Summarization(models.Model):
 
     def __str__(self):
         return f"{self.document} 요약"
+    
+
+# Criteria
+# ─────────────────────────────────────────────────────────────────────────────────────────────
+
+
+class EssayCriteria(models.Model):
+    content = models.TextField()
+    ranges = models.ManyToManyField('EvaluationRange')
+    
+    def __str__(self):
+        return f"에세이 평가기준 {self.id}"
     
 
 class ClassificationCriteria(models.Model):

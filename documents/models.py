@@ -1,6 +1,6 @@
 from django.db import models
 
-# Create your models here.
+
 class DocumentTypeChoices(models.TextChoices):
     학생생활기록부 = '학생생활기록부', '학생생활기록부'
     검정고시합격증명서 = '검정고시합격증명서', '검정고시합격증명서'
@@ -11,10 +11,12 @@ class DocumentTypeChoices(models.TextChoices):
     체력평가 = '체력평가', '체력평가'
     논술 = '논술', '논술'
 
+
 class DocumentStateChoices(models.TextChoices):
     미제출 = '미제출', '미제출'
     검토 = '검토', '검토'
     제출 = '제출', '제출' 
+
 
 class Document(models.Model):
     document_type = models.CharField(max_length=50)
