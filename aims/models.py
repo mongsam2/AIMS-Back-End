@@ -61,3 +61,9 @@ class ClassificationCriteria(models.Model):
         return self.classification_code
 
 
+class ValidationCriteria(models.Model):
+    document_type = models.CharField(max_length=100)
+    v_condition = models.TextField()
+
+    def __str__(self):
+        return self.document_type
