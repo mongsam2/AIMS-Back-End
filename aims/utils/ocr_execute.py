@@ -1,12 +1,20 @@
 # pip install requests
 
 import requests
-from ..models import Extraction
-from rest_framework.response import Response
 
 
-def execute_ocr(api_key, document_id, file):
-    filename = file
+def execute_ocr(api_key, file_path):
+    
+    """
+    Args:
+        api_key (str): UPSTAGE API KEY
+        file_path (str): django 데이터베이스에서 파일
+
+    Returns:
+        text: ocr에서 추출한 멀티라인 문자열 반환
+    """
+
+    filename = file_path
     
     url = "https://api.upstage.ai/v1/document-ai/ocr"
     headers = {"Authorization": f"Bearer {api_key}"}
@@ -16,8 +24,7 @@ def execute_ocr(api_key, document_id, file):
 
     if response.status_code == 200:
         content = [page.get("text", "") for page in response.json().get("pages", [])]
-        Extraction.objects.create(content=content, document_id=document_id)
 
-        return Response({'message': content})
+        return content
 
-    return Response({"message": "처리 실패"}, 400)
+    return "처리 실패"
