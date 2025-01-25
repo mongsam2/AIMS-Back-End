@@ -50,3 +50,14 @@ class Summarization(models.Model):
 
     def __str__(self):
         return f"{self.document} 요약"
+    
+
+class ClassificationCriteria(models.Model):
+    classification_code = models.IntegerField()
+    c_condition = models.TextField()
+
+
+    def __str__(self):
+        return self.classification_code
+
+
