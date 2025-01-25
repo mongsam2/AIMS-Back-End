@@ -2,7 +2,7 @@
 
 from openai import OpenAI # openai==1.52.2
 
-def refine_ocr_with_solar(api_key, content, prompt, temperature=0.7):
+def get_answer_from_solar(api_key, content, prompt, temperature=0.7):
     client = OpenAI(
         api_key=api_key,
         base_url="https://api.upstage.ai/v1/solar"
