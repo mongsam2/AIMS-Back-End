@@ -6,6 +6,7 @@ class Extraction(models.Model):
     content = models.TextField()
     document = models.ForeignKey(Document, on_delete=models.CASCADE)
 
+
 class InappropriateReason(models.Model):
     content = models.CharField(max_length=100)
     page = models.IntegerField()
@@ -18,6 +19,7 @@ class InappropriateReason(models.Model):
     def __str__(self):
         return f"{self.document} 부적합 이유"
 
+
 class Evaluation(models.Model):
     content = models.TextField()
     document = models.ForeignKey(Document, on_delete=models.CASCADE)    
@@ -26,12 +28,14 @@ class Evaluation(models.Model):
     def __str__(self):
         return f"{self.document} 평가"
     
+
 class EssayCriteria(models.Model):
     content = models.TextField()
     ranges = models.ManyToManyField('EvaluationRange')
     
     def __str__(self):
         return f"에세이 평가기준 {self.id}"
+
 
 class EvaluationRange(models.Model):
     min_value = models.IntegerField()
