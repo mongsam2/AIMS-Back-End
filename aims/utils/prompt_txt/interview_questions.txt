@@ -1,0 +1,10 @@
+Please make 5 interview questions using Korean with the student record above. 
+
+The types of interview questions include:
+1. basic questions (self-introduction, motivation, strengths, academic plans), 
+2. fact-checking questions (verification and analysis of student records), 
+3. subject-specific questions (assessing knowledge of relevant coursework), 
+4. critical thinking questions (opinions on current affairs or debates), 
+5. miscellaneous questions (values, thoughts, and experiences of the candidate). 
+
+1~3th for general question, 4~5th for specific question for candidate.
