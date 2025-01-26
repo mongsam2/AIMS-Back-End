@@ -1,10 +1,12 @@
 from rest_framework.serializers import ModelSerializer, SerializerMethodField, CharField
-from .models import InappropriateReason, Evaluation, Summarization, EssayCriteria, EvaluationRange
+from .models import DocumentPassFail, Evaluation, Summarization, EssayCriteria, EvaluationRange
+
 
 class ReasonsSerializer(ModelSerializer):
     class Meta:
-        model = InappropriateReason
+        model = DocumentPassFail
         exclude = ('document','id')
+
 
 class SummarizationSerializer(ModelSerializer):
     file_url = SerializerMethodField()
@@ -18,6 +20,7 @@ class SummarizationSerializer(ModelSerializer):
     def get_file_url(self, obj):
         return obj.document.file_url.url
 
+
 class EvaluationSerializer(ModelSerializer):
     file_url = SerializerMethodField()
 
@@ -28,10 +31,12 @@ class EvaluationSerializer(ModelSerializer):
     def get_file_url(self, obj):
         return obj.document.file_url.url
 
+
 class EvaluationRangeSerializer(ModelSerializer):
     class Meta:
         model = EvaluationRange
         fields = '__all__'
+
 
 class EssayCriteriaSerializer(ModelSerializer):
     ranges = EvaluationRangeSerializer(many=True)
@@ -39,3 +44,5 @@ class EssayCriteriaSerializer(ModelSerializer):
     class Meta:
         model = EssayCriteria
         exclude = ('id',)
+
+

@@ -1,22 +1,20 @@
 from django.db import models
 from documents.models import Document
 
-# Create your models here.
+
 class Extraction(models.Model):
     content = models.TextField()
     document = models.ForeignKey(Document, on_delete=models.CASCADE)
 
-class InappropriateReason(models.Model):
-    content = models.CharField(max_length=100)
+
+class DocumentPassFail(models.Model):
+    document_id = models.ForeignKey(Document, on_delete=models.CASCADE, related_name='reasons') 
     page = models.IntegerField()
-    x = models.IntegerField()
-    y = models.IntegerField()
-    width = models.IntegerField()
-    height = models.IntegerField()
-    document = models.ForeignKey(Document, on_delete=models.CASCADE, related_name='reasons') 
+    content = models.CharField(max_length=100)
 
     def __str__(self):
         return f"{self.document} 부적합 이유"
+
 
 class Evaluation(models.Model):
     content = models.TextField()
@@ -25,13 +23,7 @@ class Evaluation(models.Model):
 
     def __str__(self):
         return f"{self.document} 평가"
-    
-class EssayCriteria(models.Model):
-    content = models.TextField()
-    ranges = models.ManyToManyField('EvaluationRange')
-    
-    def __str__(self):
-        return f"에세이 평가기준 {self.id}"
+
 
 class EvaluationRange(models.Model):
     min_value = models.IntegerField()
@@ -50,3 +42,32 @@ class Summarization(models.Model):
 
     def __str__(self):
         return f"{self.document} 요약"
+    
+
+# Criteria
+# ─────────────────────────────────────────────────────────────────────────────────────────────
+
+
+class EssayCriteria(models.Model):
+    content = models.TextField()
+    ranges = models.ManyToManyField('EvaluationRange')
+    
+    def __str__(self):
+        return f"에세이 평가기준 {self.id}"
+    
+
+class ClassificationCriteria(models.Model):
+    classification_code = models.IntegerField()
+    c_condition = models.TextField()
+
+
+    def __str__(self):
+        return self.classification_code
+
+
+class ValidationCriteria(models.Model):
+    document_type = models.CharField(max_length=100)
+    v_condition = models.TextField()
+
+    def __str__(self):
+        return self.document_type

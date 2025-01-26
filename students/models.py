@@ -1,4 +1,5 @@
 from django.db import models
+from documents.models import DocumentType
 
 # Create your models here.
 class Student(models.Model):
@@ -6,6 +7,9 @@ class Student(models.Model):
     name = models.CharField(max_length=10)
     department = models.ForeignKey('Department', on_delete=models.CASCADE)
     phone = models.CharField(max_length=11)
+    required_documents = models.ManyToManyField(DocumentType, related_name='students')
+    applicant_type = models.ForeignKey('ApplicantType', on_delete=models.CASCADE, null=True, blank=True)
+    
 
     def __str__(self):
         return f"{self.name}({self.student_id})"
@@ -16,6 +20,11 @@ class Department(models.Model):
     def __str__(self):
         return self.department
 
+class ApplicantType(models.Model):
+    name = models.CharField(max_length=50, primary_key=True)
+
+
+# 현재는 사용하지 않음  ------------------------------------------------------------------------------
 class Applicant(models.Model):
     application_type = models.CharField(max_length=50)
     active = models.BooleanField(default=True)
