@@ -20,7 +20,7 @@ class DocumentStateChoices(models.TextChoices):
 
 
 class Document(models.Model):
-    document_type = models.CharField(max_length=50, choices=DocumentTypeChoices.choices, default=DocumentTypeChoices.알수없음)
+    document_type = models.ForeignKey('DocumentType', on_delete=models.CASCADE)
     student = models.ForeignKey('students.Student', on_delete=models.CASCADE, related_name='documents')
     upload_date = models.DateTimeField(auto_now_add=True)
     state = models.CharField(max_length=10, choices=DocumentStateChoices.choices, default=DocumentStateChoices.제출)
