@@ -99,7 +99,7 @@ class SummarizationView(APIView):
             api_key=api_key,
             base_url="https://api.upstage.ai/v1/solar"
         )
-        prompt_file = os.path.join(settings.BASE_DIR, 'aims', 'utils', 'student_record_prompt.txt')  
+        prompt_file = os.path.join(settings.BASE_DIR, 'aims', 'utils', 'prompt_txt', 'student_record_prompt.txt')  
         with open(prompt_file, 'r', encoding='utf-8') as file:
             prompt_content = file.read()
         parse_text = extraction
