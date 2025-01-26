@@ -13,7 +13,7 @@ class DocumentPassFail(models.Model):
     content = models.CharField(max_length=100)
 
     def __str__(self):
-        return f"{self.document} 부적합 이유"
+        return f"{self.document_id} 부적합 이유"
 
 
 class Evaluation(models.Model):
