@@ -94,32 +94,6 @@ class ExtractionView(APIView):
     
 class SummarizationView(APIView):
     def post(self, request, document_id):
-        # LLM 길이 초과 문제 해결
-        '''file_path = get_document_path(document_id)
-
-         # OCR API 호출
-        url = "https://api.upstage.ai/v1/document-ai/ocr"
-        headers = {"Authorization": f"Bearer {api_key}"}
-
-        with open(file_path, "rb") as file:
-            files = {"document": file}
-            response = requests.post(url, headers=headers, files=files)
-            
-            if response.status_code == 200:
-                output_data = response.json()
-                pages = output_data.get("pages", [])
-                page_texts = [page.get("text", "") for page in pages]
-        '''
-                
-               # 민솔이는  page_texts(ocr에서 Text 추출한 값) 이 값을 사용하면 됩니다 !
-            
-               # 추천면접질문 로직 추가 - 민솔
-            
-        '''html_content = txt_to_html(page_texts)
-        pages_with_keywords = extract_pages_with_keywords(html_content)
-        parse_response = parse_selected_pages(file_path, pages_with_keywords)
-        solar_response = process_with_solar(parse_response)'''
-            
         extraction = extract_text(document_id)
         client = OpenAI(
             api_key=api_key,
@@ -148,11 +122,35 @@ class SummarizationView(APIView):
         except Document.DoesNotExist:
             raise NotFound(f"Document for document ID {document_id} is not found.")
         
-        solar_response = stream.choices[0].message.content 
-        Summarization.objects.create(content=solar_response, document=document)
+        summarization_text = stream.choices[0].message.content 
+
+        # 면접 질문 생성
+        prompt_file = os.path.join(settings.BASE_DIR, 'aims', 'utils', 'prompt_txt', 'interview_questions.txt')  
+        with open(prompt_file, 'r', encoding='utf-8') as file:
+            prompt_content = file.read()
+        
+        # 면접 질문 생성 chat api
+        stream = client.chat.completions.create(
+            model="solar-pro",
+            messages=[
+                {
+                    "role": "user",
+                    "content": extraction + "\n---\n" + prompt_content
+                }
+            ],
+            stream=True,
+        )
+
+        # 생성된 면접 질문 -> questions에 저장
+        questions = ""
+        for chunk in stream:
+            if chunk.choices[0].delta.content is not None:
+                questions += chunk.choices[0].delta.content
+        
+        Summarization.objects.create(content=summarization_text, document=document, question=questions)
         return Response({
-            'solar_response': solar_response
-            # 추천된 면접 질문 목록 추가 - 민솔
+            'summarization': summarization_text,
+            'questions': questions
         })
     
 class ReasonView(APIView):
