@@ -13,32 +13,7 @@ class DocumentSerializer(ModelSerializer):
     '''
     class Meta:
         model = Document
-        fields = ('file_url',)
-
-    def validate_file_url(self, value):
-        lst = value.name.split('_')
-        if len(lst) != 2:
-            raise serializers.ValidationError('파일 이름이 올바르지 않습니다.')
-        
-        student_id, document_type = lst
-        if Student.objects.filter(student_id=student_id).exists() == False:
-            raise serializers.ValidationError('해당 학생이 존재하지 않습니다.')
-        
-        document_type = document_type.split('.')[0]
-        if document_type not in DocumentTypeChoices.values:
-            raise serializers.ValidationError('해당 서류의 유형이 존재하지 않습니다.')
-        
-        return value
-
-
-    def create(self, validated_data):
-        file_url = validated_data['file_url'].name
-        file_name = os.path.basename(file_url)
-        student_id, document_type = file_name.split('_')
-        document_type = document_type.split('.')[0]
-        student = Student.objects.get(student_id=student_id)
-        document = Document.objects.create(student=student, document_type=document_type, file_url=validated_data['file_url'])
-        return document
+        fields = ('file_url', 'document_type', 'student')
 
 
 class DocumentStatusSerializer(ModelSerializer):
