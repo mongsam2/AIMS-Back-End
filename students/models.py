@@ -7,7 +7,7 @@ class Student(models.Model):
     name = models.CharField(max_length=10)
     department = models.ForeignKey('Department', on_delete=models.CASCADE)
     phone = models.CharField(max_length=11)
-    required_documents = models.ManyToManyField(DocumentType, related_name='students')
+    required_documents = models.ManyToManyField('documents.DocumentType', related_name='students')
     applicant_type = models.ForeignKey('ApplicantType', on_delete=models.CASCADE, null=True, blank=True)
     
 

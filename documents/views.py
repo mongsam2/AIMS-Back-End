@@ -35,13 +35,13 @@ class DocumentListView(generics.ListAPIView):
     def get_queryset(self):
         student_id = self.kwargs.get('student_id')
         document_type = self.kwargs.get('document_type')
-        documents = Document.objects.filter(student_id=student_id, document_type=document_type).order_by('-upload_date')
+        documents = Document.objects.filter(student_id=student_id, document_type__name=document_type).order_by('-upload_date')
         return documents
 
 
 class StudentRecordsView(APIView):
     def get(self, request):
-        student_records = Document.objects.filter(document_type='학생생활기록부', state="제출").order_by('upload_date').values("id")
+        student_records = Document.objects.filter(document_type__name='학생생활기록부', state="제출").order_by('upload_date').values("id")
         answer = []
         for record in student_records:
             answer.append(record['id'])
@@ -62,7 +62,7 @@ class StudentRecordDetailView(generics.RetrieveUpdateAPIView):
 
 class EssaysView(APIView):
     def get(self, request):
-        essays = Document.objects.filter(document_type='논술').order_by('upload_date').values("id")
+        essays = Document.objects.filter(document_type__name='논술').order_by('upload_date').values("id")
         answer = []
         for essay in essays:
             answer.append(essay['id'])
