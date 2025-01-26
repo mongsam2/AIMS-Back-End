@@ -2,21 +2,29 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import NotFound, APIException
 
+
 # 모델 (데이터베이스)
-from .models import Document, Extraction, Summarization, InappropriateReason, Evaluation
+from aims.models import Extraction, Summarization, DocumentPassFail, Evaluation 
+from documents.models import Document
+from rest_framework.exceptions import APIException
 
-import os
-import requests
-from openai import OpenAI
+
 from django.conf import settings
-from tempfile import NamedTemporaryFile
+import requests
+import os
 
-from django.shortcuts import get_object_or_404
+from aims.utils.essay import summary_and_extract, first_evaluate
+
+from aims.utils.execute_solar import get_answer_from_solar
+
+
+API_KEY = os.environ.get('UPSTAGE_API_KEY')
 
 from .utils.essay import summary_and_extract, first_evaluate
 from .utils.essay_preprocess import preprocess_pdf
+from django.core.files.temp import NamedTemporaryFile
+from openai import OpenAI
 
-from .utils.summarization import txt_to_html, extract_pages_with_keywords, parse_selected_pages, process_with_solar
 
 
 # Create your views here.
@@ -25,7 +33,6 @@ def get_document_path_and_type(document_id):
         document = Document.objects.get(id=document_id)
     except Document.DoesNotExist:
         raise NotFound('그 아이디는 없는 아이디요')
-    #file_path = 'http://127.0.0.1:8000'+document.file_url.url
     return document.file_url.path, document.document_type
 
 def extract_text(document_id):
@@ -92,6 +99,7 @@ class ExtractionView(APIView):
         
         return Response({"message": "처리 실패"}, 400)
     
+
 class SummarizationView(APIView):
     def post(self, request, document_id):
         extraction = extract_text(document_id)
@@ -102,21 +110,10 @@ class SummarizationView(APIView):
         prompt_file = os.path.join(settings.BASE_DIR, 'aims', 'utils', 'prompt_txt', 'student_record_prompt.txt')  
         with open(prompt_file, 'r', encoding='utf-8') as file:
             prompt_content = file.read()
-        parse_text = extraction
-        stream = client.chat.completions.create(
-            model="solar-pro",
-            messages=[
-                {
-                    "role": "system",
-                    "content": prompt_content
-                },
-                {
-                    "role": "user",
-                    "content": parse_text
-                }
-            ],
-            stream=False,
-        )
+        
+        response = get_answer_from_solar(API_KEY, extraction, prompt_content)
+
+        # TODO - from yejin : 갑자기 document 왜 불러오는지?
         try:
             document = Document.objects.get(id=document_id)
         except Document.DoesNotExist:
@@ -153,14 +150,17 @@ class SummarizationView(APIView):
             'questions': questions
         })
     
-class ReasonView(APIView):
+
+class DocumentPassFailView(APIView):
     def post(self, request, document_id):
         file_path, doc_type = get_document_path_and_type(document_id)
         
         return Response({'message': file_path})
 
+
 class EvaluationView(APIView):
     def post(self, request, document_id):
+        # TODO - from yejin : 주석이랑 코드랑 일치하지 않음
         # Extraction DB로부터 OCR 결과인 content를 갖고오기
         try:
             document = Document.objects.get(id=document_id)
@@ -174,7 +174,7 @@ class EvaluationView(APIView):
         # content의 글자 수 기반으로 1차 채점하기
         try:
             criteria = dict() # criteria 갖고 오기
-            summary = summary_and_extract(api_key, content, criteria)
+            summary = summary_and_extract(API_KEY, content, criteria)
             evaluate = first_evaluate(content, criteria)
         except Exception as e:
             raise APIException(f"Error during summarization and evaluation: {str(e)}")

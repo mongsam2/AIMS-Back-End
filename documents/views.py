@@ -7,13 +7,13 @@ from rest_framework import generics
 from .models import Document
 from aims.models import Summarization, Evaluation
 
-from .serializers import DocumentSerializer, DocumentReasonsSerializer
+from .serializers import DocumentSerializer, DocumentReasonsSerializer, DocumentStatusSerializer
 from aims.serializers import EvaluationSerializer, SummarizationSerializer, EssayCriteriaSerializer
 from rest_framework.parsers import MultiPartParser, FormParser
 
 from rest_framework import status
 
-# Create your views here.
+
 class DocumentCreateView(generics.CreateAPIView):
     serializer_class = DocumentSerializer
 
@@ -27,6 +27,7 @@ class DocumentCreateView(generics.CreateAPIView):
     def perform_create(self, serializer):
         return serializer.save()
 
+
 class DocumentListView(generics.ListAPIView):
     serializer_class = DocumentReasonsSerializer
     pagination_class = None
@@ -37,6 +38,7 @@ class DocumentListView(generics.ListAPIView):
         documents = Document.objects.filter(student_id=student_id, document_type=document_type).order_by('-upload_date')
         return documents
 
+
 class StudentRecordsView(APIView):
     def get(self, request):
         student_records = Document.objects.filter(document_type='학생생활기록부', state="제출").order_by('upload_date').values("id")
@@ -44,6 +46,7 @@ class StudentRecordsView(APIView):
         for record in student_records:
             answer.append(record['id'])
         return Response(answer)
+
 
 class StudentRecordDetailView(generics.RetrieveUpdateAPIView):
     serializer_class = SummarizationSerializer
@@ -55,7 +58,8 @@ class StudentRecordDetailView(generics.RetrieveUpdateAPIView):
         except Summarization.DoesNotExist:
             raise NotFound(f"{record_id}: 해당 id의 학생생활기록부 요약본을 찾을 수 없습니다.")
         return summarization
-    
+
+
 class EssaysView(APIView):
     def get(self, request):
         essays = Document.objects.filter(document_type='논술').order_by('upload_date').values("id")
@@ -63,6 +67,7 @@ class EssaysView(APIView):
         for essay in essays:
             answer.append(essay['id'])
         return Response(answer)
+
 
 class EssayDetailView(generics.RetrieveUpdateAPIView):
     serializer_class = EvaluationSerializer
@@ -75,6 +80,7 @@ class EssayDetailView(generics.RetrieveUpdateAPIView):
             raise NotFound(f"{essay_id}: 해당 id의 논술 평가본을 찾을 수 없습니다.")
         return evaluation
 
+
 class EssayCriteriaView(generics.RetrieveAPIView):
     serializer_class = EssayCriteriaSerializer
 
@@ -86,3 +92,30 @@ class EssayCriteriaView(generics.RetrieveAPIView):
             raise NotFound(f"{essay_id}: 해당 id의 논술 파일일을 찾을 수 없습니다.")
         criteria = document.criteria
         return criteria
+    
+
+class DocumentStateAPIView(APIView):
+    def patch(self, request, pk):
+        try:
+            document = Document.objects.get(pk=pk)
+        except Document.DoesNotExist:
+            return Response({"error": "Document not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = DocumentStatusSerializer(document, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "Document state updated successfully"})
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class DocumentWithReasonsAPIView(APIView):
+    def get(self, request, pk):
+        try:
+            document = Document.objects.get(pk=pk)
+        except Document.DoesNotExist:
+            return Response({"error": "Document not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = DocumentReasonsSerializer(document)
+        return Response(serializer.data)
+    
+
