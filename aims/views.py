@@ -119,7 +119,7 @@ class SummarizationView(APIView):
         except Document.DoesNotExist:
             raise NotFound(f"Document for document ID {document_id} is not found.")
         
-        summarization_text = stream.choices[0].message.content 
+        summarization_text = response
 
         # 면접 질문 생성
         prompt_file = os.path.join(settings.BASE_DIR, 'aims', 'utils', 'prompt_txt', 'interview_questions.txt')  
