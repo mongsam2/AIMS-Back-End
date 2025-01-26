@@ -3,7 +3,7 @@ from rest_framework import serializers
 from .models import Document, DocumentTypeChoices
 from aims.models import Summarization
 from students.models import Student
-from aims.serializers import ReasonsSerializer
+from aims.serializers import DocumentPassFailSerializer
 import os
 
 
@@ -23,11 +23,11 @@ class DocumentStatusSerializer(ModelSerializer):
 
 
 class DocumentReasonsSerializer(ModelSerializer):
-    reasons = ReasonsSerializer(many=True)
+    reasons = DocumentPassFailSerializer(many=True)
 
     class Meta:
         model = Document
-        fields = ['file_url', 'reasons']
+        fields = ['state', 'file_url', 'reasons']
 
 
 class StudentRecordsSerializer(ModelSerializer):
