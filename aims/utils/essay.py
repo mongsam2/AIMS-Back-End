@@ -27,7 +27,7 @@ def summary_and_extract(api_key, content, criteria):
     except FileNotFoundError:
         raise APIException(f"Prompt file not found at path: {PROMPT_PATHS}")
 
-    rule = criteria.get("평가 내용", "")
+    rule = criteria.get("content", "")
 
     # Chat API
     try:
@@ -62,8 +62,8 @@ def first_evaluate(content, criteria):
     
     # 글자 수 평가 기준 불러오기
     penalty = None
-    for rule in criteria.get("분량", []):
-        if rule["min"] <= char_cnt and char_cnt < rule["max"]:
+    for rule in criteria.get("ranges", []):
+        if rule["min_value"] <= char_cnt and char_cnt < rule["max_value"]:
             penalty = rule["penalty"]
             break
     
