@@ -25,6 +25,9 @@ from .utils.essay_preprocess import preprocess_pdf
 from django.core.files.temp import NamedTemporaryFile
 from openai import OpenAI
 
+# serializers
+from aims.serializers import EssayCriteriaSerializer
+
 
 
 # Create your views here.
@@ -173,13 +176,14 @@ class EvaluationView(APIView):
         # 논술 OCR 내용인 content를 가지고 요약문 및 추출문 갖고오기
         # content의 글자 수 기반으로 1차 채점하기
         try:
-            criteria = dict() # criteria 갖고 오기
+            criteria = EssayCriteriaSerializer(document.criteria).data # criteria 갖고 오기
+            print(criteria)
             summary = summary_and_extract(API_KEY, content, criteria)
             evaluate = first_evaluate(content, criteria)
         except Exception as e:
             raise APIException(f"Error during summarization and evaluation: {str(e)}")
 
-        rule = f'\n\n{criteria.get("평가 내용", "")}'
+        rule = f'\n\n{criteria.get("content", "")}'
         Evaluation.objects.create(content=summary, document=document, memo=evaluate+rule)
 
         return Response({'message': 'Summarization successful', 'summary': summary, 'evaluate': evaluate+rule})
