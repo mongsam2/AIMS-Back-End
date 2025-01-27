@@ -6,7 +6,6 @@ from rest_framework.exceptions import NotFound, APIException
 # 모델 (데이터베이스)
 from aims.models import Extraction, Summarization, DocumentPassFail, Evaluation 
 from documents.models import Document
-from rest_framework.exceptions import APIException
 
 
 from django.conf import settings
@@ -14,20 +13,19 @@ import requests
 import os
 
 from aims.utils.essay import summary_and_extract, first_evaluate
+from aims.utils.essay_preprocess import preprocess_pdf
 
+from aims.utils.execute_ocr import execute_ocr
 from aims.utils.execute_solar import get_answer_from_solar
 
 
 API_KEY = os.environ.get('UPSTAGE_API_KEY')
 
-from .utils.essay import summary_and_extract, first_evaluate
-from .utils.essay_preprocess import preprocess_pdf
 from django.core.files.temp import NamedTemporaryFile
 from openai import OpenAI
 
 # serializers
 from aims.serializers import EssayCriteriaSerializer
-
 
 
 # Create your views here.
