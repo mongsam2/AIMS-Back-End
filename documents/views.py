@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.exceptions import NotFound
 from rest_framework.parsers import MultiPartParser, FormParser
 
-from .models import Document, ValidationCriteria
+from .models import Document
 from aims.models import Summarization, Evaluation
 
 from .serializers import DocumentSerializer, DocumentReasonsSerializer, DocumentStatusSerializer

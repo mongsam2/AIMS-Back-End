@@ -9,8 +9,10 @@ class Extraction(models.Model):
 
 class DocumentPassFail(models.Model):
     document_id = models.ForeignKey(Document, on_delete=models.CASCADE, related_name='reasons') 
+    is_valid = models.BooleanField(default=False)
+
     page = models.IntegerField()
-    content = models.CharField(max_length=100)
+    failed_conditions = models.CharField(max_length=100)
 
     def __str__(self):
         return f"{self.document_id} 부적합 이유"
@@ -61,4 +63,4 @@ class ValidationCriteria(models.Model):
     v_condition = models.TextField()
 
     def __str__(self):
-        return self.document_type
+        return f'{self.document_type} 적합 기준 : {self.v_condition}'
