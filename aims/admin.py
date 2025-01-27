@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Evaluation, Summarization, Extraction, EssayCriteria, EvaluationRange, ClassificationCriteria, ValidationCriteria, DocumentPassFail
+from .models import Evaluation, Summarization, Extraction, EssayCriteria, EvaluationRange, ValidationCriteria, DocumentPassFail
 
 # Uitls
 class ShortContent:
@@ -38,14 +38,7 @@ class SummarizationAdmin(admin.ModelAdmin, ShortContent):
     list_display = ('document', 'short_content', 'short_question')
 
     def short_question(self, obj):
-        return f"{obj.question[:50]}..." if len(obj.question) > 30 else obj.question
-    
-
-@admin.register(ClassificationCriteria)
-class ClassificationCriteriaAdmin(admin.ModelAdmin):
-    list_display = ('id', 'classification_code', 'c_condition') 
-    search_fields = ('classification_code', 'c_condition')      
-    list_filter = ('classification_code',)                      
+        return f"{obj.question[:50]}..." if len(obj.question) > 30 else obj.question                 
 
 
 @admin.register(ValidationCriteria)
