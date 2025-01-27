@@ -54,15 +54,6 @@ class EssayCriteria(models.Model):
     
     def __str__(self):
         return f"에세이 평가기준 {self.id}"
-    
-
-class ClassificationCriteria(models.Model):
-    classification_code = models.IntegerField()
-    c_condition = models.TextField()
-
-
-    def __str__(self):
-        return self.classification_code
 
 
 class ValidationCriteria(models.Model):
