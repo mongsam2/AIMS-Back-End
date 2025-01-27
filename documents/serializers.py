@@ -13,7 +13,7 @@ class DocumentSerializer(ModelSerializer):
     '''
     class Meta:
         model = Document
-        fields = ('file_url', 'document_type', 'student')
+        fields = ('file_url', 'document_type', 'student', 'criteria')
 
 
 class DocumentStatusSerializer(ModelSerializer):

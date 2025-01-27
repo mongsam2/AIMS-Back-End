@@ -51,11 +51,13 @@ class Summarization(models.Model):
 
 
 class EssayCriteria(models.Model):
+    year = models.IntegerField(default=2025)
+    quater = models.IntegerField(default=1, null=True, blank=True)
     content = models.TextField()
     ranges = models.ManyToManyField('EvaluationRange')
     
     def __str__(self):
-        return f"에세이 평가기준 {self.id}"
+        return f"{self.year}년도 에세이 평가기준 {self.id}"
 
 
 class ValidationCriteria(models.Model):
