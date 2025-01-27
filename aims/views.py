@@ -103,7 +103,7 @@ class EvaluationView(APIView):
             refine_prompt = f.read()
 
         extraction = execute_ocr(API_KEY, document.file_url.path)[0]
-        content = get_answer_from_solar(api_key, extraction, refine_prompt)
+        content = get_answer_from_solar(API_KEY, extraction, refine_prompt)
         
         # 요약문 및 추출문 갖고오기
         # content의 글자 수 기반으로 1차 채점하기
