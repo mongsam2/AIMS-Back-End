@@ -40,6 +40,7 @@ def get_document_path(document_id):
 class ExtractionView(APIView):
     def post(self, request, document_id):
         file_path = get_document_path(document_id)
+        
         content = execute_ocr(API_KEY, file_path)
         Extraction.objects.create(content=content, document_id=document_id)
         
@@ -113,7 +114,7 @@ class EvaluationView(APIView):
             raise NotFound(f"Document for document ID {document_id} is not found.")
         
         # 논술 OCR 내용인 content를 가지고 오기 
-        content = execute_ocr(API_KEY, document.file_url.path)
+        content = execute_ocr(API_KEY, document.file_url.path)[0]
         
         # 요약문 및 추출문 갖고오기
         # content의 글자 수 기반으로 1차 채점하기
