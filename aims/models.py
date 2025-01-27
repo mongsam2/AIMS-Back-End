@@ -49,6 +49,7 @@ class Summarization(models.Model):
 
 
 class EssayCriteria(models.Model):
+    year = models.IntegerField(default=2025)
     content = models.TextField()
     ranges = models.ManyToManyField('EvaluationRange')
     
