@@ -29,76 +29,21 @@ from aims.serializers import EssayCriteriaSerializer
 
 
 # Create your views here.
-def get_document_path_and_type(document_id):
+def get_document_path(document_id):
     try:
         document = Document.objects.get(id=document_id)
     except Document.DoesNotExist:
         raise NotFound('그 아이디는 없는 아이디요')
-    return document.file_url.path, document.document_type
+    return document.file_url.path
 
-def extract_text(document_id):
-    file_path, doc_type = get_document_path_and_type(document_id)
-    url = "https://api.upstage.ai/v1/document-ai/ocr"
-    headers = {"Authorization": f"Bearer {api_key}"}
-
-    # 논술일 때만 데이터 전처리
-    if doc_type == "논술":
-        with NamedTemporaryFile(delete=False, suffix=".pdf") as temp_file:
-            temp_path = temp_file.name
-            preprocess_pdf(file_path, temp_path)
-            file_path = temp_path
-    
-    try:
-        # Upstage API
-        with open(file_path, "rb") as file:
-            files = {"document": file}
-            response = requests.post(url, headers=headers, files=files)
-            if response.status_code == 200:
-                content = response.json().get('text', '')
-                Extraction.objects.create(content=content, document_id=document_id)
-                
-                return content
-    except Exception as e:
-        
-        return Response({"message": f"처리 실패: {str(e)}"}, 400)
-    finally:
-        if doc_type == "논술" and os.path.exists(file_path):
-            os.remove(file_path)
-    
-    return Response({"message": "처리 실패"}, 400)
-
-api_key = os.environ.get('UPSTAGE_API_KEY')
 
 class ExtractionView(APIView):
     def post(self, request, document_id):
-        file_path, doc_type = get_document_path_and_type(document_id)
-        url = "https://api.upstage.ai/v1/document-ai/ocr"
-        headers = {"Authorization": f"Bearer {api_key}"}
-
-        if doc_type == "논술":
-            with NamedTemporaryFile(delete=False, suffix=".pdf") as temp_file:
-                temp_path = temp_file.name
-                preprocess_pdf(file_path, temp_path)
-                file_path = temp_path
+        file_path = get_document_path(document_id)
+        content = execute_ocr(API_KEY, file_path)
+        Extraction.objects.create(content=content, document_id=document_id)
         
-        try:
-            # Upstage API
-            with open(file_path, "rb") as file:
-                files = {"document": file}
-                response = requests.post(url, headers=headers, files=files)
-                if response.status_code == 200:
-                    content = response.json().get('text', '')
-                    Extraction.objects.create(content=content, document_id=document_id)
-                    
-                    return Response({'message': content})
-        except Exception as e:
-            
-            return Response({"message": f"처리 실패: {str(e)}"}, 400)
-        finally:
-            if doc_type == "논술" and os.path.exists(file_path):
-                os.remove(file_path)
-        
-        return Response({"message": "처리 실패"}, 400)
+        return Response({'message': content})
     
 
 class SummarizationView(APIView):
@@ -154,24 +99,23 @@ class SummarizationView(APIView):
 
 class DocumentPassFailView(APIView):
     def post(self, request, document_id):
-        file_path, doc_type = get_document_path_and_type(document_id)
+        file_path = get_document_path(document_id)
         
         return Response({'message': file_path})
 
 
 class EvaluationView(APIView):
     def post(self, request, document_id):
-        # TODO - from yejin : 주석이랑 코드랑 일치하지 않음
-        # Extraction DB로부터 OCR 결과인 content를 갖고오기
+        # Document 객체 갖고오기
         try:
             document = Document.objects.get(id=document_id)
         except Document.DoesNotExist:
             raise NotFound(f"Document for document ID {document_id} is not found.")
         
-        extraction = extract_text(document_id)
-        content = extraction
+        # 논술 OCR 내용인 content를 가지고 오기 
+        content = execute_ocr(API_KEY, document.file_url.path)
         
-        # 논술 OCR 내용인 content를 가지고 요약문 및 추출문 갖고오기
+        # 요약문 및 추출문 갖고오기
         # content의 글자 수 기반으로 1차 채점하기
         try:
             criteria = EssayCriteriaSerializer(document.criteria).data # criteria 갖고 오기
