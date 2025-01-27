@@ -1,22 +1,22 @@
+import os
+import requests
+
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.exceptions import NotFound, APIException
 
-# 모델 (데이터베이스)
-from aims.models import Extraction, Summarization, DocumentPassFail, Evaluation 
-from documents.models import Document
-
-from aims.utils.summarization import txt_to_html, extract_pages_with_keywords, process_with_solar
-
 from django.conf import settings
-import requests
-import os
-
 from django.shortcuts import get_object_or_404
+
+# 모델 (데이터베이스)
+from documents.models import Document
+from aims.models import Extraction, Summarization, DocumentPassFail, Evaluation 
+
+# utils 파일 불러오기
 from aims.utils.essay import summary_and_extract, first_evaluate
 
-from aims.utils.execute_ocr import execute_ocr
-from aims.utils.execute_solar import get_answer_from_solar
+from aims.utils.execute_apis import execute_ocr, get_answer_from_solar, parse_selected_pages
+from aims.utils.summarization import txt_to_html, extract_pages_with_keywords, process_with_solar
 
 
 API_KEY = os.environ.get('UPSTAGE_API_KEY')
