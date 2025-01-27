@@ -1,39 +1,35 @@
-from rest_framework.views import APIView
+import os
+import requests
+
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework.exceptions import NotFound, APIException
 
+from django.conf import settings
+from django.shortcuts import get_object_or_404
 
 # 모델 (데이터베이스)
-from aims.models import Extraction, Summarization, DocumentPassFail, Evaluation 
 from documents.models import Document
+from aims.models import Extraction, Summarization, DocumentPassFail, Evaluation 
 
-
-from django.conf import settings
-import requests
-import os
-
+# utils 파일 불러오기
 from aims.utils.essay import summary_and_extract, first_evaluate
-from aims.utils.essay_preprocess import preprocess_pdf
 
-from aims.utils.execute_ocr import execute_ocr
-from aims.utils.execute_solar import get_answer_from_solar
-
-
-API_KEY = os.environ.get('UPSTAGE_API_KEY')
-
-from django.core.files.temp import NamedTemporaryFile
-from openai import OpenAI
+from aims.utils.execute_apis import execute_ocr, get_answer_from_solar, parse_selected_pages
+from aims.utils.summarization import txt_to_html, extract_pages_with_keywords, process_with_solar
 
 # serializers
 from aims.serializers import EssayCriteriaSerializer
 
+API_KEY = os.environ.get('UPSTAGE_API_KEY')
 
-# Create your views here.
+
 def get_document_path(document_id):
     try:
         document = Document.objects.get(id=document_id)
     except Document.DoesNotExist:
         raise NotFound('그 아이디는 없는 아이디요')
+    #file_path = 'http://127.0.0.1:8000'+document.file_url.url
     return document.file_url.path
 
 
@@ -43,58 +39,46 @@ class ExtractionView(APIView):
         
         content = execute_ocr(API_KEY, file_path)
         Extraction.objects.create(content=content, document_id=document_id)
-        
+
         return Response({'message': content})
-    
 
 class SummarizationView(APIView):
     def post(self, request, document_id):
-        extraction = extract_text(document_id)
-        client = OpenAI(
-            api_key=api_key,
-            base_url="https://api.upstage.ai/v1/solar"
-        )
-        prompt_file = os.path.join(settings.BASE_DIR, 'aims', 'utils', 'prompt_txt', 'student_record_prompt.txt')  
+        reason = Extraction.objects.get(document_id=document_id)
+        
+        # LLM 길이 초과 문제 해결
+                
+            # 민솔이는  page_texts(ocr에서 Text 추출한 값) 이 값을 사용하면 됩니다 !
+        
+            # 추천면접질문 로직 추가 - 민솔
+            
+        '''
+        html_content = txt_to_html(page_texts)
+        pages_with_keywords = extract_pages_with_keywords(html_content)
+        parse_response = parse_selected_pages(API_KEY, file_path, pages_with_keywords)
+        solar_response = process_with_solar(API_KEY, parse_response)
+        '''
+
+        # Extraction을 가져와 solar로 prompting한 결과를 response에 저장
+        extraction = Extraction.objects.get(id=document_id)
+
+        prompt_file = os.path.join(settings.BASE_DIR, 'aims', 'utils', 'student_record_prompt.txt')  
+        
         with open(prompt_file, 'r', encoding='utf-8') as file:
             prompt_content = file.read()
         
         response = get_answer_from_solar(API_KEY, extraction, prompt_content)
 
-        # TODO - from yejin : 갑자기 document 왜 불러오는지?
         try:
             document = Document.objects.get(id=document_id)
         except Document.DoesNotExist:
             raise NotFound(f"Document for document ID {document_id} is not found.")
         
-        summarization_text = response
+        Summarization.objects.create(content=response, document=document)
 
-        # 면접 질문 생성
-        prompt_file = os.path.join(settings.BASE_DIR, 'aims', 'utils', 'prompt_txt', 'interview_questions.txt')  
-        with open(prompt_file, 'r', encoding='utf-8') as file:
-            prompt_content = file.read()
-        
-        # 면접 질문 생성 chat api
-        stream = client.chat.completions.create(
-            model="solar-pro",
-            messages=[
-                {
-                    "role": "user",
-                    "content": extraction + "\n---\n" + prompt_content
-                }
-            ],
-            stream=True,
-        )
-
-        # 생성된 면접 질문 -> questions에 저장
-        questions = ""
-        for chunk in stream:
-            if chunk.choices[0].delta.content is not None:
-                questions += chunk.choices[0].delta.content
-        
-        Summarization.objects.create(content=summarization_text, document=document, question=questions)
         return Response({
-            'summarization': summarization_text,
-            'questions': questions
+            'solar_response': response
+            # 추천된 면접 질문 목록 추가 - 민솔
         })
     
 
@@ -113,14 +97,19 @@ class EvaluationView(APIView):
         except Document.DoesNotExist:
             raise NotFound(f"Document for document ID {document_id} is not found.")
         
-        # 논술 OCR 내용인 content를 가지고 오기 
-        content = execute_ocr(API_KEY, document.file_url.path)[0]
+        # 논술 OCR 교정 
+        refine_prompt_path = os.path.join(settings.BASE_DIR, 'aims', 'utils', 'prompt_txt', 'ocr_prompt.txt')
+        with open(refine_prompt_path, 'r', encoding='utf-8') as f:
+            refine_prompt = f.read()
+
+        extraction = execute_ocr(API_KEY, document.file_url.path)[0]
+        content = get_answer_from_solar(api_key, extraction, refine_prompt)
         
         # 요약문 및 추출문 갖고오기
         # content의 글자 수 기반으로 1차 채점하기
         try:
             criteria = EssayCriteriaSerializer(document.criteria).data # criteria 갖고 오기
-            print(criteria)
+            #print(criteria)
             summary = summary_and_extract(API_KEY, content, criteria)
             evaluate = first_evaluate(content, criteria)
         except Exception as e:
@@ -130,4 +119,3 @@ class EvaluationView(APIView):
         Evaluation.objects.create(content=summary, document=document, memo=evaluate+rule)
 
         return Response({'message': 'Summarization successful', 'summary': summary, 'evaluate': evaluate+rule})
-

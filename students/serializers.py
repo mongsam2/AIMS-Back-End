@@ -8,7 +8,7 @@ class StudentListSerializer(ModelSerializer):
 
     class Meta:
         model = Student
-        fields = ['student_id', 'name', 'department', 'phone', 'documents']
+        fields = ['student_id', 'name', 'department', 'phone', 'documents', 'applicant_type']
 
     def get_department(self, obj):
         return obj.department.department

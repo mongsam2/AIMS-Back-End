@@ -1,17 +1,15 @@
+from rest_framework import status
+from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
-
 from rest_framework.exceptions import NotFound
+from rest_framework.parsers import MultiPartParser, FormParser
 
-from rest_framework import generics
 from .models import Document
 from aims.models import Summarization, Evaluation
 
 from .serializers import DocumentSerializer, DocumentReasonsSerializer, DocumentStatusSerializer
 from aims.serializers import EvaluationSerializer, SummarizationSerializer, EssayCriteriaSerializer
-from rest_framework.parsers import MultiPartParser, FormParser
-
-from rest_framework import status
 
 
 class DocumentCreateView(generics.CreateAPIView):
@@ -117,5 +115,3 @@ class DocumentWithReasonsAPIView(APIView):
 
         serializer = DocumentReasonsSerializer(document)
         return Response(serializer.data)
-    
-
