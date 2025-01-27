@@ -1,17 +1,15 @@
+from rest_framework import status
+from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
-
 from rest_framework.exceptions import NotFound
+from rest_framework.parsers import MultiPartParser, FormParser
 
-from rest_framework import generics
 from .models import Document
 from aims.models import Summarization, Evaluation
 
 from .serializers import DocumentSerializer, DocumentReasonsSerializer, DocumentStatusSerializer
 from aims.serializers import EvaluationSerializer, SummarizationSerializer, EssayCriteriaSerializer
-from rest_framework.parsers import MultiPartParser, FormParser
-
-from rest_framework import status
 
 
 class DocumentCreateView(generics.CreateAPIView):
@@ -35,13 +33,13 @@ class DocumentListView(generics.ListAPIView):
     def get_queryset(self):
         student_id = self.kwargs.get('student_id')
         document_type = self.kwargs.get('document_type')
-        documents = Document.objects.filter(student_id=student_id, document_type=document_type).order_by('-upload_date')
+        documents = Document.objects.filter(student_id=student_id, document_type__name=document_type).order_by('-upload_date')
         return documents
 
 
 class StudentRecordsView(APIView):
     def get(self, request):
-        student_records = Document.objects.filter(document_type='학생생활기록부', state="제출").order_by('upload_date').values("id")
+        student_records = Document.objects.filter(document_type__name='학생생활기록부', state="제출").order_by('upload_date').values("id")
         answer = []
         for record in student_records:
             answer.append(record['id'])
@@ -62,7 +60,7 @@ class StudentRecordDetailView(generics.RetrieveUpdateAPIView):
 
 class EssaysView(APIView):
     def get(self, request):
-        essays = Document.objects.filter(document_type='논술').order_by('upload_date').values("id")
+        essays = Document.objects.filter(document_type__name='논술').order_by('upload_date').values("id")
         answer = []
         for essay in essays:
             answer.append(essay['id'])
@@ -117,5 +115,3 @@ class DocumentWithReasonsAPIView(APIView):
 
         serializer = DocumentReasonsSerializer(document)
         return Response(serializer.data)
-    
-

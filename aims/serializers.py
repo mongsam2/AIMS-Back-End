@@ -2,10 +2,10 @@ from rest_framework.serializers import ModelSerializer, SerializerMethodField, C
 from .models import DocumentPassFail, Evaluation, Summarization, EssayCriteria, EvaluationRange
 
 
-class ReasonsSerializer(ModelSerializer):
+class DocumentPassFailSerializer(ModelSerializer):
     class Meta:
         model = DocumentPassFail
-        exclude = ('document','id')
+        exclude = ('document_id','id')
 
 
 class SummarizationSerializer(ModelSerializer):
