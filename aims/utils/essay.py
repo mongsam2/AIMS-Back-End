@@ -3,7 +3,7 @@ import os
 from django.conf import settings
 from rest_framework.exceptions import APIException
 
-from aims.utils.execute_solar import get_answer_from_solar
+from aims.utils.execute_apis import get_answer_from_solar
 
 
 PROMPT_PATHS = [
