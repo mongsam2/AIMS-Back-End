@@ -90,13 +90,17 @@ class DocumentPassFailView(APIView):
 
 class EvaluationView(APIView):
     def post(self, request, document_id):
-        # Extraction DB로부터 OCR 결과인 content를 갖고오기
         try:
             document = Document.objects.get(id=document_id)
         except Document.DoesNotExist:
             raise NotFound(f"Document for document ID {document_id} is not found.")
         
-        content = document
+        refine_prompt_path = os.path.join(settings.BASE_DIR, 'aims', 'utils', 'prompt_txt', 'ocr_prompt.txt')
+        with open(refine_prompt_path, 'r', encoding='utf-8') as f:
+            refine_prompt = f.read()
+
+        extraction = extract_text(document_id)
+        content = get_answer_from_solar(api_key, extraction, refine_prompt)
         
         # 논술 OCR 내용인 content를 가지고 요약문 및 추출문 갖고오기
         # content의 글자 수 기반으로 1차 채점하기
