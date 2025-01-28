@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-jkbfl%9_4z5)y&o&9fx57unen4)))lrw7157*jn7!$^7#!12&!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['3.37.240.199', '127.0.0.1']
+ALLOWED_HOSTS = ['3.37.240.199', '127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -51,7 +51,6 @@ INSTALLED_APPS = [
     'documents.apps.DocumentsConfig',
     'aims.apps.AimsConfig',
     'users.apps.UsersConfig',
-
 ]
 
 MIDDLEWARE = [
@@ -93,6 +92,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+        'OPTIONS': {
+            'timeout': 20,  # 초 단위로 대기 시간 설정 (기본값은 5초)
+        },
     }
 }
 
