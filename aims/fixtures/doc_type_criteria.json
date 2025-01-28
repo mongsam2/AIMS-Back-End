@@ -1,0 +1,44 @@
+[
+    {
+        "model": "documents.documenttype",
+        "fields": {
+            "name": "검정고시합격증명서"
+        }
+    },
+    {
+        "model": "documents.documenttype",
+        "fields": {
+            "name": "국민체력100인증서"
+        }
+    },
+    {
+        "model": "documents.documenttype",
+        "fields": {
+            "name": "논술"
+        }
+    },
+    {
+        "model": "documents.documenttype",
+        "fields": {
+            "name": "기초수급자증명서"
+        }
+    },
+    {
+        "model": "documents.documenttype",
+        "fields": {
+            "name": "주민등록초본"
+        }
+    },
+    {
+        "model": "documents.documenttype",
+        "fields": {
+            "name": "체력평가"
+        }
+    },
+    {
+        "model": "documents.documenttype",
+        "fields": {
+            "name": "학생생활기록부"
+        }
+    }
+]

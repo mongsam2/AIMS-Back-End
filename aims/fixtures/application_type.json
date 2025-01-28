@@ -1,0 +1,26 @@
+[
+    {
+        "model": "students.applicanttype",
+        "fields": {
+            "name": "서류"
+        }
+    },
+    {
+        "model": "students.applicanttype",
+        "fields": {
+            "name": "면접"
+        }
+    },
+    {
+        "model": "students.applicanttype",
+        "fields": {
+            "name": "논술"
+        }
+    },
+    {
+        "model": "students.applicanttype",
+        "fields": {
+            "name": "국방"
+        }
+    }
+]

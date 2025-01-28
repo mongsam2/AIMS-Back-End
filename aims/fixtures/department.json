@@ -1,0 +1,50 @@
+[
+    {
+        "model": "students.department",
+        "fields": {
+            "department": "경영학과"
+        }
+    },
+    {
+        "model": "students.department",
+        "fields": {
+            "department": "국어국문학과"
+        }
+    },
+    {
+        "model": "students.department",
+        "fields": {
+            "department": "역사학과"
+        }
+    },
+    {
+        "model": "students.department",
+        "fields": {
+            "department": "행정학과"
+        }
+    },
+    {
+        "model": "students.department",
+        "fields": {
+            "department": "영어영문학과"
+        }
+    },
+    {
+        "model": "students.department",
+        "fields": {
+            "department": "경제학과"
+        }
+    },
+    {
+        "model": "students.department",
+        "fields": {
+            "department": "사이버국방보안과"
+        }
+    },
+    {
+        "model": "students.department",
+        "fields": {
+            "department": "미디어커뮤니케이션학과"
+        }
+    }
+]

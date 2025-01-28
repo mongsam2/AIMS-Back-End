@@ -1,6 +1,6 @@
 [
     {
-        "model": "appname.validationcriteria",
+        "model": "aims.validationcriteria",
         "pk": 1,
         "fields": {
             "document_type": "주민등록초본",
@@ -8,7 +8,7 @@
         }
     },
     {
-        "model": "appname.validationcriteria",
+        "model": "aims.validationcriteria",
         "pk": 2,
         "fields": {
             "document_type": "주민등록초본",
@@ -16,7 +16,7 @@
         }
     },
     {
-        "model": "appname.validationcriteria",
+        "model": "aims.validationcriteria",
         "pk": 3,
         "fields": {
             "document_type": "검정고시합격증명서",
@@ -24,7 +24,7 @@
         }
     },
     {
-        "model": "appname.validationcriteria",
+        "model": "aims.validationcriteria",
         "pk": 4,
         "fields": {
             "document_type": "생활기록부대체양식",
@@ -32,7 +32,7 @@
         }
     },
     {
-        "model": "appname.validationcriteria",
+        "model": "aims.validationcriteria",
         "pk": 5,
         "fields": {
             "document_type": "기초생활수급자증명서",
@@ -40,7 +40,7 @@
         }
     },
     {
-        "model": "appname.validationcriteria",
+        "model": "aims.validationcriteria",
         "pk": 6,
         "fields": {
             "document_type": "국민체력100",
@@ -48,7 +48,7 @@
         }
     },
     {
-        "model": "appname.validationcriteria",
+        "model": "aims.validationcriteria",
         "pk": 7,
         "fields": {
             "document_type": "체력평가",
