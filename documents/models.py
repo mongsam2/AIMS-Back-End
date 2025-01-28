@@ -1,7 +1,9 @@
 import os
 from django.db import models
+from django.conf import settings
 
-API_KEY = os.environ.get('UPSTAGE_API_KEY')
+
+api_key = settings.API_KEY
 
 
 class DocumentTypeChoices(models.TextChoices):
@@ -50,7 +52,7 @@ class Document(models.Model):
         
         # OCR 후 Extraction에 저장
         from aims.utils.execute_apis import execute_ocr
-        content = execute_ocr(API_KEY, self.file_url.path)
+        content = execute_ocr(api_key, self.file_url.path)
 
         if isinstance(content, list):
             content = " ".join(content)

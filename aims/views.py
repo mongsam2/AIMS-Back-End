@@ -13,6 +13,8 @@ from documents.models import Document
 from aims.models import Extraction, Summarization, DocumentPassFail, Evaluation 
 
 # utils 파일 불러오기
+from django.conf import settings
+
 from aims.utils.essay import summary_and_extract, first_evaluate
 
 from aims.utils.execute_apis import execute_ocr, get_answer_from_solar, parse_selected_pages
@@ -21,8 +23,7 @@ from aims.utils.summarization import txt_to_html, extract_pages_with_keywords, p
 # serializers
 from aims.serializers import EssayCriteriaSerializer
 
-API_KEY = os.environ.get('UPSTAGE_API_KEY')
-
+api_key = settings.API_KEY
 
 def get_document_path(document_id):
     try:
@@ -37,7 +38,7 @@ class ExtractionView(APIView):
     def post(self, request, document_id):
         file_path = get_document_path(document_id)
         
-        content = execute_ocr(API_KEY, file_path)
+        content = execute_ocr(api_key, file_path)
         Extraction.objects.create(content=content, document_id=document_id)
 
         return Response({'message': content})
@@ -67,7 +68,7 @@ class SummarizationView(APIView):
         with open(prompt_file, 'r', encoding='utf-8') as file:
             prompt_content = file.read()
         
-        response = get_answer_from_solar(API_KEY, extraction, prompt_content)
+        response = get_answer_from_solar(api_key, extraction, prompt_content)
 
         try:
             document = Document.objects.get(id=document_id)
@@ -102,15 +103,15 @@ class EvaluationView(APIView):
         with open(refine_prompt_path, 'r', encoding='utf-8') as f:
             refine_prompt = f.read()
 
-        extraction = execute_ocr(API_KEY, document.file_url.path)[0]
-        content = get_answer_from_solar(API_KEY, extraction, refine_prompt)
+        extraction = execute_ocr(api_key, document.file_url.path)[0]
+        content = get_answer_from_solar(api_key, extraction, refine_prompt)
         
         # 요약문 및 추출문 갖고오기
         # content의 글자 수 기반으로 1차 채점하기
         try:
             criteria = EssayCriteriaSerializer(document.criteria).data # criteria 갖고 오기
             #print(criteria)
-            summary = summary_and_extract(API_KEY, content, criteria)
+            summary = summary_and_extract(api_key, content, criteria)
             evaluate = first_evaluate(content, criteria)
         except Exception as e:
             raise APIException(f"Error during summarization and evaluation: {str(e)}")
