@@ -18,6 +18,8 @@ from aims.utils.essay import summary_and_extract, first_evaluate
 from aims.utils.execute_apis import execute_ocr, get_answer_from_solar, parse_selected_pages
 from aims.utils.summarization import txt_to_html, extract_pages_with_keywords, process_with_solar
 
+# serializers
+from aims.serializers import EssayCriteriaSerializer
 
 API_KEY = os.environ.get('UPSTAGE_API_KEY')
 
@@ -34,12 +36,11 @@ def get_document_path(document_id):
 class ExtractionView(APIView):
     def post(self, request, document_id):
         file_path = get_document_path(document_id)
-
+        
         content = execute_ocr(API_KEY, file_path)
         Extraction.objects.create(content=content, document_id=document_id)
 
         return Response({'message': content})
-
 
 class SummarizationView(APIView):
     def post(self, request, document_id):
@@ -90,28 +91,31 @@ class DocumentPassFailView(APIView):
 
 class EvaluationView(APIView):
     def post(self, request, document_id):
+        # Document 객체 갖고오기
         try:
             document = Document.objects.get(id=document_id)
         except Document.DoesNotExist:
             raise NotFound(f"Document for document ID {document_id} is not found.")
         
+        # 논술 OCR 교정 
         refine_prompt_path = os.path.join(settings.BASE_DIR, 'aims', 'utils', 'prompt_txt', 'ocr_prompt.txt')
         with open(refine_prompt_path, 'r', encoding='utf-8') as f:
             refine_prompt = f.read()
 
-        extraction = extract_text(document_id)
-        content = get_answer_from_solar(api_key, extraction, refine_prompt)
+        extraction = execute_ocr(API_KEY, document.file_url.path)[0]
+        content = get_answer_from_solar(API_KEY, extraction, refine_prompt)
         
-        # 논술 OCR 내용인 content를 가지고 요약문 및 추출문 갖고오기
+        # 요약문 및 추출문 갖고오기
         # content의 글자 수 기반으로 1차 채점하기
         try:
-            criteria = dict() # criteria 갖고 오기
+            criteria = EssayCriteriaSerializer(document.criteria).data # criteria 갖고 오기
+            #print(criteria)
             summary = summary_and_extract(API_KEY, content, criteria)
             evaluate = first_evaluate(content, criteria)
         except Exception as e:
             raise APIException(f"Error during summarization and evaluation: {str(e)}")
 
-        rule = f'\n\n{criteria.get("평가 내용", "")}'
+        rule = f'\n\n{criteria.get("content", "")}'
         Evaluation.objects.create(content=summary, document=document, memo=evaluate+rule)
 
         return Response({'message': 'Summarization successful', 'summary': summary, 'evaluate': evaluate+rule})

@@ -1,8 +1,9 @@
 import os
 
-from openai import OpenAI
 from django.conf import settings
 from rest_framework.exceptions import APIException
+
+from aims.utils.execute_apis import get_answer_from_solar
 
 
 PROMPT_PATHS = [
@@ -12,12 +13,6 @@ PROMPT_PATHS = [
 
 
 def summary_and_extract(api_key, content, criteria):
-    
-    client = OpenAI(
-        api_key=api_key,
-        base_url="https://api.upstage.ai/v1/solar"
-    )
-
     # Load the prompt and criteria
     try:
         with open(PROMPT_PATHS[0], 'r', encoding='utf-8') as f1, \
@@ -29,30 +24,7 @@ def summary_and_extract(api_key, content, criteria):
 
     rule = criteria.get("content", "")
 
-    # Chat API
-    try:
-        stream = client.chat.completions.create(
-            model="solar-pro",
-            messages=[
-                {
-                    "role": "system",
-                    "content": prompt + rule + prompt2
-                },
-                {
-                    "role": "user",
-                    "content": content
-                }
-            ],
-            stream=True,
-            #temperature=0.2
-        )
-    except Exception as e:
-        raise APIException(f"OpenAI API call failed: {str(e)}")
-
-    summary_extract = ""
-    for chunk in stream:
-        if chunk.choices[0].delta.content is not None:
-            summary_extract += chunk.choices[0].delta.content
+    summary_extract = get_answer_from_solar(api_key, content, f"{prompt}\n\n{rule}\n\n{prompt2}")
     
     return summary_extract
 
