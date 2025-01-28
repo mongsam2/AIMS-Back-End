@@ -1,0 +1,244 @@
+[
+    {
+        "model": "students.student",
+        "fields": {
+            "student_id": "20250001",
+            "name": "원어민",
+            "department": "경영학과",
+            "phone": "01020250001",
+            "required_documents": [],
+            "applicant_type": null
+        }
+    },
+    {
+        "model": "students.student",
+        "fields": {
+            "student_id": "20250002",
+            "name": "김수학",
+            "department": "국어국문학과",
+            "phone": "01020250002",
+            "required_documents": [],
+            "applicant_type": null
+        }
+    },
+    {
+        "model": "students.student",
+        "fields": {
+            "student_id": "20250003",
+            "name": "송재현",
+            "department": "경영학과",
+            "phone": "01020250003",
+            "required_documents": [],
+            "applicant_type": null
+        }
+    },
+    {
+        "model": "students.student",
+        "fields": {
+            "student_id": "20250004",
+            "name": "신종선",
+            "department": "경영학과",
+            "phone": "01020250004",
+            "required_documents": [],
+            "applicant_type": null
+        }
+    },
+    {
+        "model": "students.student",
+        "fields": {
+            "student_id": "20250005",
+            "name": "최수진",
+            "department": "국어국문학과",
+            "phone": "01020250005",
+            "required_documents": [],
+            "applicant_type": null
+        }
+    },
+    {
+        "model": "students.student",
+        "fields": {
+            "student_id": "20250006",
+            "name": "한지민",
+            "department": "국어국문학과",
+            "phone": "01020250006",
+            "required_documents": [],
+            "applicant_type": null
+        }
+    },
+    {
+        "model": "students.student",
+        "fields": {
+            "student_id": "20250007",
+            "name": "황태백",
+            "department": "경영학과",
+            "phone": "01020250007",
+            "required_documents": [],
+            "applicant_type": null
+        }
+    },
+    {
+        "model": "students.student",
+        "fields": {
+            "student_id": "20250008",
+            "name": "정우성",
+            "department": "경영학과",
+            "phone": "01020250008",
+            "required_documents": [],
+            "applicant_type": null
+        }
+    },
+    {
+        "model": "students.student",
+        "fields": {
+            "student_id": "20250009",
+            "name": "문가비",
+            "department": "역사학과",
+            "phone": "01020250009",
+            "required_documents": [],
+            "applicant_type": null
+        }
+    },
+    {
+        "model": "students.student",
+        "fields": {
+            "student_id": "20250010",
+            "name": "김예진",
+            "department": "역사학과",
+            "phone": "01020250010",
+            "required_documents": [],
+            "applicant_type": null
+        }
+    },
+    {
+        "model": "students.student",
+        "fields": {
+            "student_id": "20250011",
+            "name": "오은영",
+            "department": "역사학과",
+            "phone": "01020250011",
+            "required_documents": [],
+            "applicant_type": null
+        }
+    },
+    {
+        "model": "students.student",
+        "fields": {
+            "student_id": "20250012",
+            "name": "용덕출",
+            "department": "경영학과",
+            "phone": "01020250012",
+            "required_documents": [],
+            "applicant_type": null
+        }
+    },
+    {
+        "model": "students.student",
+        "fields": {
+            "student_id": "20250013",
+            "name": "공수철",
+            "department": "행정학과",
+            "phone": "01020250013",
+            "required_documents": [],
+            "applicant_type": null
+        }
+    },
+    {
+        "model": "students.student",
+        "fields": {
+            "student_id": "20250014",
+            "name": "김민솔",
+            "department": "국어국문학과",
+            "phone": "01020250014",
+            "required_documents": [],
+            "applicant_type": null
+        }
+    },
+    {
+        "model": "students.student",
+        "fields": {
+            "student_id": "20250015",
+            "name": "레오란타",
+            "department": "행정학과",
+            "phone": "01020250015",
+            "required_documents": [],
+            "applicant_type": null
+        }
+    },
+    {
+        "model": "students.student",
+        "fields": {
+            "student_id": "20250016",
+            "name": "차성연",
+            "department": "영어영문학과",
+            "phone": "01020250016",
+            "required_documents": [],
+            "applicant_type": null
+        }
+    },
+    {
+        "model": "students.student",
+        "fields": {
+            "student_id": "20250017",
+            "name": "이재효",
+            "department": "영어영문학과",
+            "phone": "01020250017",
+            "required_documents": [],
+            "applicant_type": null
+        }
+    },
+    {
+        "model": "students.student",
+        "fields": {
+            "student_id": "20250018",
+            "name": "이현",
+            "department": "영어영문학과",
+            "phone": "01020250018",
+            "required_documents": [],
+            "applicant_type": null
+        }
+    },
+    {
+        "model": "students.student",
+        "fields": {
+            "student_id": "20250019",
+            "name": "박하늘별님구름햇님보다사랑스러우리",
+            "department": "경제학과",
+            "phone": "01020250019",
+            "required_documents": [],
+            "applicant_type": null
+        }
+    },
+    {
+        "model": "students.student",
+        "fields": {
+            "student_id": "20250020",
+            "name": "배형준",
+            "department": "경제학과",
+            "phone": "01020250020",
+            "required_documents": [],
+            "applicant_type": null
+        }
+    },
+    {
+        "model": "students.student",
+        "fields": {
+            "student_id": "20250021",
+            "name": "이태신",
+            "department": "사이버국방보안과",
+            "phone": "01020250021",
+            "required_documents": [],
+            "applicant_type": null
+        }
+    },
+    {
+        "model": "students.student",
+        "fields": {
+            "student_id": "20250022",
+            "name": "김서준",
+            "department": "미디어커뮤니케이션학과",
+            "phone": "01020250022",
+            "required_documents": [],
+            "applicant_type": null
+        }
+    }
+]
