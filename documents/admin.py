@@ -14,4 +14,4 @@ class DocumentTypeAdmin(admin.ModelAdmin):
 
 @admin.register(RawData)
 class RawDataAdmin(admin.ModelAdmin):
-    list_display = ('file_url')
+    list_display = ('file_url',)
