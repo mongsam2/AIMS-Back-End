@@ -4,7 +4,7 @@ from documents.models import Documentation, DocumentStateChoices, DocumentType
 from aims.models import Extraction, ValidationCriteria
 from students.models import Student
 
-from aims.utils.get_student_name import extract_student_name
+from aims.utils.extract_regx import extract_student_name
 
 @receiver(post_save, sender=Extraction)
 def assign_student_id_and_document_type(sender, instance, **kwargs):
