@@ -51,6 +51,8 @@ INSTALLED_APPS = [
     'documents.apps.DocumentsConfig',
     'aims.apps.AimsConfig',
     'users.apps.UsersConfig',
+
+    'django_celery_results',
 ]
 
 MIDDLEWARE = [
@@ -158,10 +160,19 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 X_FRAME_OPTIONS = 'ALLOWALL'
 
-API_KEY = os.environ.get('UPSTAGE_API_KEY')
+API_KEY = "up_i5WhoWFjRhUXflOznB9DLOMQLcG8n"
 
 
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
+
+# Celery 작업에 JSON 직렬화 사용
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
+
+# Celery 작업 결과를 저장할 백엔드 (옵션)
 CELERY_RESULT_BACKEND = 'django-db'
+
+# 타임존 설정
+CELERY_TIMEZONE = 'Asia/Seoul'
+
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
