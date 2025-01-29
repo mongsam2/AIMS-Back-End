@@ -118,9 +118,7 @@ class DocumentWithReasonsAPIView(APIView):
 
         serializer = DocumentReasonsSerializer(document)
         return Response(serializer.data)
-import logging
 
-logger = logging.getLogger(__name__)
 
 class RawDataCreateView(generics.CreateAPIView):
     serializer_class = RawDataSerializer
@@ -128,7 +126,6 @@ class RawDataCreateView(generics.CreateAPIView):
     def perform_create(self, serializer):
         try:
             instance = serializer.save()
-            from documents.tasks import process_ocr_task
             process_ocr_task.delay(instance.id, api_key)
             return instance
         except Exception as e:

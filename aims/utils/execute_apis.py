@@ -5,7 +5,7 @@ import requests
 from openai import OpenAI # openai==1.52.2
 from celery import shared_task
 
-@shared_task
+
 def execute_ocr(api_key, file_path):
     
     """
