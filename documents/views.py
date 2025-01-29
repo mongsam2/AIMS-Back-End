@@ -14,7 +14,7 @@ from aims.serializers import EvaluationSerializer, SummarizationSerializer, Essa
 from django.core.exceptions import ValidationError
 from django.conf import settings
 api_key = settings.API_KEY
-from documents.tasks import process_ocr_task
+from documents.tasks import process_ocr_task, process_ocr_task_for_essay
 
 class DocumentCreateView(generics.CreateAPIView):
     serializer_class = DocumentSerializer
@@ -27,7 +27,19 @@ class DocumentCreateView(generics.CreateAPIView):
         return Response({"document_id": instance.id}, status=status.HTTP_201_CREATED, headers=headers)
 
     def perform_create(self, serializer):
-        return serializer.save()
+        try:
+            instance = serializer.save()
+
+            process_ocr_task_for_essay.delay(instance.id, api_key)
+
+            return instance
+        
+        except ValidationError as e:
+            raise ValidationError(f"유효성 검사 오류: {e}")
+
+        except Exception as e:
+            print(f"Error occurred during task execution: {e}")
+            raise
 
 
 class DocumentListView(generics.ListAPIView):
@@ -119,19 +131,6 @@ class DocumentWithReasonsAPIView(APIView):
 
         serializer = DocumentReasonsSerializer(document)
         return Response(serializer.data)
-
-
-class RawDataCreateView(generics.CreateAPIView):
-    serializer_class = RawDataSerializer
-
-    def perform_create(self, serializer):
-        try:
-            instance = serializer.save()
-            process_ocr_task.delay(instance.id, api_key)
-            return instance
-        except Exception as e:
-            print(f"Error occurred during task execution: {e}")
-
 
 
 class DocumentationCreateView(generics.CreateAPIView):
