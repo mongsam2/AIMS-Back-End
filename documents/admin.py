@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Document, DocumentType, RawData
+from .models import Document, DocumentType, RawData, Documentation
 
 
 @admin.register(Document)
@@ -15,3 +15,8 @@ class DocumentTypeAdmin(admin.ModelAdmin):
 @admin.register(RawData)
 class RawDataAdmin(admin.ModelAdmin):
     list_display = ('file_url',)
+
+
+@admin.register(Documentation)
+class DocumentationAdmin(admin.ModelAdmin):
+    list_display = ('id', 'student_id', 'document_type', 'file_url', 'state')

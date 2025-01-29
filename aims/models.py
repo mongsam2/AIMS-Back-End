@@ -1,9 +1,9 @@
 from django.db import models
-from documents.models import Document, RawData
+from documents.models import Document, Documentation
 
 
 class Extraction(models.Model):
-    document = models.OneToOneField(RawData, on_delete=models.CASCADE, related_name='extraction')
+    document = models.OneToOneField(Documentation, on_delete=models.CASCADE, related_name='extraction')
     content = models.TextField()
 
     def __str__(self):

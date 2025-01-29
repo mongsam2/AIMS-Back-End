@@ -8,9 +8,10 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from .models import Document
 from aims.models import Summarization, Evaluation
 
-from .serializers import DocumentSerializer, DocumentReasonsSerializer, DocumentStatusSerializer, RawDataSerializer
+from .serializers import DocumentSerializer, DocumentReasonsSerializer, DocumentStatusSerializer, RawDataSerializer, DocumentationSerializer
 from aims.serializers import EvaluationSerializer, SummarizationSerializer, EssayCriteriaSerializer
 
+from django.core.exceptions import ValidationError
 from django.conf import settings
 api_key = settings.API_KEY
 from documents.tasks import process_ocr_task
@@ -130,4 +131,31 @@ class RawDataCreateView(generics.CreateAPIView):
             return instance
         except Exception as e:
             print(f"Error occurred during task execution: {e}")
+
+
+
+class DocumentationCreateView(generics.CreateAPIView):
+    serializer_class = DocumentationSerializer
+
+    def perform_create(self, serializer):
+        try:
+            instance = serializer.save()
+
+            if not instance.file_url:
+                raise ValidationError("파일이 업로드되지 않았습니다.")
+
+            allowed_extensions = ['.pdf', '.png', '.jpg', '.jpeg']
+            if not any(instance.file_url.name.lower().endswith(ext) for ext in allowed_extensions):
+                raise ValidationError("지원되지 않는 파일 형식입니다. PDF, PNG, JPG만 가능합니다.")
+
+            process_ocr_task.delay(instance.id, api_key)
+
+            return instance
+        
+        except ValidationError as e:
+            raise ValidationError(f"유효성 검사 오류: {e}")
+
+        except Exception as e:
+            print(f"Error occurred during task execution: {e}")
+            raise
     
