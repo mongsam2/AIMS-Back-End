@@ -1,8 +1,9 @@
 import os
+
+from documents.utils.essay_preprocess import preprocess_pdf
+
 from django.db import models
 from django.conf import settings
-
-
 api_key = settings.API_KEY
 
 
@@ -46,6 +47,10 @@ class Document(models.Model):
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         self.process_ocr_and_validation()
+        
+        # 논술 데이터 전처리
+        if self.document_type == "논술":
+            preprocess_pdf(self.file_url.path, self.file_url.path)
 
 
     def process_ocr_and_validation(self):
