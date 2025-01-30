@@ -1,23 +1,6 @@
 [
     {
         "model": "aims.validationcriteria",
-        "pk": 1,
-        "fields": {
-            "document_type": "주민등록초본",
-            "v_condition": "초본"
-        }
-    },
-    {
-        "model": "aims.validationcriteria",
-        "pk": 2,
-        "fields": {
-            "document_type": "주민등록초본",
-            "v_condition": "성명정정"
-        }
-    },
-    {
-        "model": "aims.validationcriteria",
-        "pk": 3,
         "fields": {
             "document_type": "검정고시합격증명서",
             "v_condition": "고등학교 졸업학력 검정고시 합격증명서"
@@ -25,23 +8,6 @@
     },
     {
         "model": "aims.validationcriteria",
-        "pk": 4,
-        "fields": {
-            "document_type": "생활기록부대체양식",
-            "v_condition": "학교생활기록부 대체 서식"
-        }
-    },
-    {
-        "model": "aims.validationcriteria",
-        "pk": 5,
-        "fields": {
-            "document_type": "기초생활수급자증명서",
-            "v_condition": "수급자 증명서"
-        }
-    },
-    {
-        "model": "aims.validationcriteria",
-        "pk": 6,
         "fields": {
             "document_type": "국민체력100",
             "v_condition": "체력인증서"
@@ -49,10 +15,30 @@
     },
     {
         "model": "aims.validationcriteria",
-        "pk": 7,
+        "fields": {
+            "document_type": "기초생활수급자증명서",
+            "v_condition": "수급자 증명서"
+        }
+    },
+    {
+        "model": "aims.validationcriteria",
+        "fields": {
+            "document_type": "주민등록초본",
+            "v_condition": "성명정정"
+        }
+    },
+    {
+        "model": "aims.validationcriteria",
         "fields": {
             "document_type": "체력평가",
             "v_condition": "국민체력100"
+        }
+    },
+    {
+        "model": "aims.validationcriteria",
+        "fields": {
+            "document_type": "생활기록부대체양식",
+            "v_condition": "학교생활기록부 대체 서식"
         }
     }
 ]
