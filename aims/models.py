@@ -8,6 +8,14 @@ class Extraction(models.Model):
 
     def __str__(self):
         return f"Extraction for {self.document.id}"
+    
+
+class ExtractionEssay(models.Model):
+    document = models.OneToOneField(Document, on_delete=models.CASCADE, related_name='extraction_essay')
+    content = models.TextField()
+
+    def __str__(self):
+        return f"Extraction for {self.document.id}"
 
 
 class DocumentPassFail(models.Model):

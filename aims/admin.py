@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Evaluation, Summarization, Extraction, EssayCriteria, EvaluationRange, ValidationCriteria, DocumentPassFail
+from .models import Evaluation, Summarization, Extraction, ExtractionEssay, EssayCriteria, EvaluationRange, ValidationCriteria, DocumentPassFail
 
 # Uitls
 class ShortContent:
@@ -7,9 +7,13 @@ class ShortContent:
          return f"{obj.content[:50]}..." if len(obj.content) > 30 else obj.content
 
 
-# Register your models here.
 @admin.register(Extraction)
 class ExtractionAdmin(admin.ModelAdmin, ShortContent):
+    list_display = ('document', 'short_content')
+
+
+@admin.register(ExtractionEssay)
+class ExtractionEssayAdmin(admin.ModelAdmin, ShortContent):
     list_display = ('document', 'short_content')
 
 
