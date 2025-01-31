@@ -2,25 +2,25 @@
     {
         "model": "documents.documenttype",
         "fields": {
+            "name": "알수없음"
+        }
+    },
+    {
+        "model": "documents.documenttype",
+        "fields": {
             "name": "검정고시합격증명서"
         }
     },
     {
         "model": "documents.documenttype",
         "fields": {
-            "name": "국민체력100인증서"
+            "name": "국민체력100"
         }
     },
     {
         "model": "documents.documenttype",
         "fields": {
-            "name": "논술"
-        }
-    },
-    {
-        "model": "documents.documenttype",
-        "fields": {
-            "name": "기초수급자증명서"
+            "name": "기초생활수급자증명서"
         }
     },
     {
@@ -38,7 +38,19 @@
     {
         "model": "documents.documenttype",
         "fields": {
+            "name": "생활기록부대체양식"
+        }
+    },
+    {
+        "model": "documents.documenttype",
+        "fields": {
             "name": "학생생활기록부"
+        }
+    },
+    {
+        "model": "documents.documenttype",
+        "fields": {
+            "name": "논술"
         }
     }
 ]

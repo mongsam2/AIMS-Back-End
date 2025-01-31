@@ -2,6 +2,17 @@
     {
         "model": "students.student",
         "fields": {
+            "student_id": "20250000",
+            "name": "무명이",
+            "department": "학과없음",
+            "phone": "0",
+            "required_documents": [],
+            "applicant_type": null
+        }
+    },
+    {
+        "model": "students.student",
+        "fields": {
             "student_id": "20250001",
             "name": "원어민",
             "department": "경영학과",

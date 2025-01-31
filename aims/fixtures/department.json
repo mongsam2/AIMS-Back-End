@@ -2,6 +2,12 @@
     {
         "model": "students.department",
         "fields": {
+            "department": "학과없음"
+        }
+    },
+    {
+        "model": "students.department",
+        "fields": {
             "department": "경영학과"
         }
     },
