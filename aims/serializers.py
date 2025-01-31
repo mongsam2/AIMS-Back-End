@@ -26,7 +26,7 @@ class EvaluationSerializer(ModelSerializer):
 
     class Meta:
         model = Evaluation
-        fields = ['file_url', 'content']
+        fields = ['file_url', 'content', 'memo']
     
     def get_file_url(self, obj):
         return obj.document.file_url.url
