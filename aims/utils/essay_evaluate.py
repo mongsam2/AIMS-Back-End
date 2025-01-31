@@ -12,8 +12,8 @@ PROMPT_PATHS = [
 ]
 
 
-def summary_and_extract(api_key, content, criteria):
-    # Load the prompt and criteria
+def evaluate(api_key, content, criteria):
+    # prompt 불러오기
     try:
         with open(PROMPT_PATHS[0], 'r', encoding='utf-8') as f1, \
              open(PROMPT_PATHS[1], 'r', encoding='utf-8') as f2:
@@ -23,12 +23,8 @@ def summary_and_extract(api_key, content, criteria):
         raise APIException(f"Prompt file not found at path: {PROMPT_PATHS}")
 
     rule = criteria.get("content", "")
-
-    summary_extract = get_answer_from_solar(api_key, content, f"{prompt}\n\n{rule}\n\n{prompt2}")
+    summary_extract = get_answer_from_solar(api_key, content, f"{prompt}\n{rule}\n{prompt2}")
     
-    return summary_extract
-
-def first_evaluate(content, criteria):
     # 글자 수 계산
     char_cnt = len(content)
     
@@ -38,13 +34,5 @@ def first_evaluate(content, criteria):
         if rule["min_value"] <= char_cnt and char_cnt < rule["max_value"]:
             penalty = rule["penalty"]
             break
-    
-    evaluate = f"{char_cnt}자 : "
-    if penalty == 0:
-        evaluate += "감점 없음"
-    elif penalty == None:
-        evaluate += "분량 미충족"
-    else:
-        evaluate += f"{penalty}점 감점"
 
-    return evaluate
+    return summary_extract, penalty

@@ -76,7 +76,7 @@ class StudentRecordDetailView(generics.RetrieveUpdateAPIView):
 
 class EssaysView(APIView):
     def get(self, request):
-        essays = Document.objects.filter(document_type__name='논술').order_by('upload_date').values("id")
+        essays = Document.objects.filter(document_type='논술').order_by('upload_date').values("id")
         answer = []
         for essay in essays:
             answer.append(essay['id'])

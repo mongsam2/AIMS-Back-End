@@ -15,7 +15,7 @@ from aims.models import Extraction, Summarization, DocumentPassFail, Evaluation
 # utils 파일 불러오기
 from django.conf import settings
 
-from aims.utils.essay import summary_and_extract, first_evaluate
+from aims.utils.essay_evaluate import evaluate
 
 from aims.utils.execute_apis import execute_ocr, get_answer_from_solar, parse_selected_pages
 from aims.utils.summarization import txt_to_html, extract_pages_with_keywords, process_with_solar
@@ -110,13 +110,10 @@ class EvaluationView(APIView):
         # content의 글자 수 기반으로 1차 채점하기
         try:
             criteria = EssayCriteriaSerializer(document.criteria).data # criteria 갖고 오기
-            #print(criteria)
-            summary = summary_and_extract(api_key, content, criteria)
-            evaluate = first_evaluate(content, criteria)
+            summary_extract, penalty = evaluate(api_key, content, criteria)
         except Exception as e:
             raise APIException(f"Error during summarization and evaluation: {str(e)}")
 
-        rule = f'\n\n{criteria.get("content", "")}'
-        Evaluation.objects.create(content=summary, document=document, memo=evaluate+rule)
+        Evaluation.objects.create(content=summary_extract, document=document, memo=penalty)
 
-        return Response({'message': 'Summarization successful', 'summary': summary, 'evaluate': evaluate+rule})
+        return Response({'message': 'Summarization successful', 'summary': summary_extract, 'evaluate': penalty})
