@@ -10,7 +10,7 @@ from django.shortcuts import get_object_or_404
 
 # 모델 (데이터베이스)
 from documents.models import Document
-from aims.models import Extraction, Summarization, DocumentPassFail, Evaluation 
+from aims.models import Extraction, ExtractionEssay, Summarization, DocumentPassFail, Evaluation 
 
 # utils 파일 불러오기
 from django.conf import settings
@@ -98,7 +98,8 @@ class EvaluationView(APIView):
         except Document.DoesNotExist:
             raise NotFound(f"Document for document ID {document_id} is not found.")
         
-        content = None
+        extraction_essay = ExtractionEssay.objects.get(id=document_id)
+        content = extraction_essay.content
 
         # 요약문 및 추출문 갖고오기
         # content의 글자 수 기반으로 1차 채점하기
