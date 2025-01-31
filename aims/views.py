@@ -39,7 +39,7 @@ class ExtractionView(APIView):
         file_path = get_document_path(document_id)
         
         content = execute_ocr(api_key, file_path)
-        Extraction.objects.create(content=content, document_id=document_id)
+        Extraction.objects.create(content=content, document=document_id)
 
         return Response({'message': content})
 

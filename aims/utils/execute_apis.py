@@ -3,6 +3,7 @@
 
 import requests
 from openai import OpenAI # openai==1.52.2
+from celery import shared_task
 
 
 def execute_ocr(api_key, file_path):
@@ -26,8 +27,10 @@ def execute_ocr(api_key, file_path):
 
     if response.status_code == 200:
         content = [page.get("text", "") for page in response.json().get("pages", [])]
-
         return content
+    
+    print(f"Request failed with status code: {response.status_code}")
+    print(f"Response content: {response.text}")
 
     return "처리 실패"
 

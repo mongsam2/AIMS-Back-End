@@ -8,9 +8,12 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from .models import Document
 from aims.models import Summarization, Evaluation
 
-from .serializers import DocumentSerializer, DocumentReasonsSerializer, DocumentStatusSerializer
+from .serializers import DocumentSerializer, DocumentReasonsSerializer, DocumentStatusSerializer, RawDataSerializer
 from aims.serializers import EvaluationSerializer, SummarizationSerializer, EssayCriteriaSerializer
 
+from django.conf import settings
+api_key = settings.API_KEY
+from documents.tasks import process_ocr_task
 
 class DocumentCreateView(generics.CreateAPIView):
     serializer_class = DocumentSerializer
@@ -115,3 +118,16 @@ class DocumentWithReasonsAPIView(APIView):
 
         serializer = DocumentReasonsSerializer(document)
         return Response(serializer.data)
+
+
+class RawDataCreateView(generics.CreateAPIView):
+    serializer_class = RawDataSerializer
+
+    def perform_create(self, serializer):
+        try:
+            instance = serializer.save()
+            process_ocr_task.delay(instance.id, api_key)
+            return instance
+        except Exception as e:
+            print(f"Error occurred during task execution: {e}")
+    
