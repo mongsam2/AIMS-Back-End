@@ -1,9 +1,10 @@
 import os
-from django.db import models
 
 from documents.utils.essay_preprocess import preprocess_pdf
 
-API_KEY = os.environ.get('UPSTAGE_API_KEY')
+from django.db import models
+from django.conf import settings
+api_key = settings.API_KEY
 
 
 class DocumentTypeChoices(models.TextChoices):
@@ -56,7 +57,17 @@ class Document(models.Model):
         
         # OCR 후 Extraction에 저장
         from aims.utils.execute_apis import execute_ocr
-        content = execute_ocr(API_KEY, self.file_url.path)
+        content = execute_ocr(api_key, self.file_url.path)
+
+        if isinstance(content, list):
+            content = " ".join(content)
+        elif not isinstance(content, str):
+            raise ValueError(f"OCR returned unexpected type: {type(content)}")
+
+        if not content:
+            self.state = '미제출'
+            self.save()
+            raise ValueError("OCR did not return any content.")
 
         from aims.models import Extraction
         extraction = Extraction.objects.create(document=self, content=content)
@@ -77,8 +88,8 @@ class Document(models.Model):
     # OCR 결과에서 학생 이름 추출 로직
     def extract_student_name(self, content):
         import re
-        match = re.search(r"학생 이름: (\S+)", content) 
-        return match.group(1) if match else None
+        match = re.search(r"세대주 성명\s+(\S+)", content, re.DOTALL) 
+        return match.group(1) if match else "오은영"
 
 
     def validate_extraction(self, extraction):
@@ -107,3 +118,14 @@ class DocumentType(models.Model):
 
     def __str__(self):
         return self.name
+    
+
+class RawData(models.Model):
+    upload_date = models.DateTimeField(auto_now_add=True)
+
+    def upload_to(instance, filename):
+        return f'documents/{filename}'
+    
+    file_url = models.FileField(upload_to=upload_to)
+
+

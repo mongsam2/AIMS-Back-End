@@ -1,10 +1,13 @@
 from django.db import models
-from documents.models import Document
+from documents.models import Document, RawData
 
 
 class Extraction(models.Model):
+    document = models.OneToOneField(RawData, on_delete=models.CASCADE, related_name='extraction')
     content = models.TextField()
-    document = models.ForeignKey(Document, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"Extraction for {self.document.id}"
 
 
 class DocumentPassFail(models.Model):
