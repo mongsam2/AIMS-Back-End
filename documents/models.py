@@ -1,8 +1,9 @@
 import os
+
+from documents.utils.essay_preprocess import preprocess_pdf
+
 from django.db import models
 from django.conf import settings
-
-
 api_key = settings.API_KEY
 
 
@@ -41,8 +42,8 @@ class Document(models.Model):
 
     def __str__(self):
         return f"{self.student}의 {self.document_type}({self.state})"
-    
-    
+
+
 class DocumentType(models.Model):
     name = models.CharField(max_length=50, primary_key=True)
 
