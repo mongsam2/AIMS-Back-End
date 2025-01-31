@@ -110,7 +110,6 @@ class EvaluationView(APIView):
         # content의 글자 수 기반으로 1차 채점하기
         try:
             criteria = EssayCriteriaSerializer(document.criteria).data # criteria 갖고 오기
-            #print(criteria)
             summary_extract, penalty = evaluate(api_key, content, criteria)
         except Exception as e:
             raise APIException(f"Error during summarization and evaluation: {str(e)}")
