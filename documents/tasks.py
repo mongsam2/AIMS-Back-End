@@ -1,6 +1,9 @@
 import os
+
 from celery import shared_task
+from django.conf import settings
 from .models import Documentation, Document
+
 from aims.models import Extraction, ExtractionEssay
 from aims.utils.execute_apis import execute_ocr, get_answer_from_solar
 
@@ -34,7 +37,9 @@ def process_ocr_task_for_essay(document_id, api_key):
         content = execute_ocr(api_key, document.file_url.path)
         content = str(content)
         
-        prompt = "Always provide your response in Korean. When performing corrections, only fix spelling, grammar, or word errors that are clearly incorrect in the given context. Do not overcorrect, change the tone, or rewrite sentences unless absolutely necessary. Preserve the original meaning and style as much as possible."
+        prompt_path = os.path.join(settings.BASE_DIR, 'aims', 'utils', 'prompt_txt', 'refine_prompt.txt')
+        with open(prompt_path, 'r', encoding='utf-8') as f:
+            prompt = f.read()
 
         refined_content = get_answer_from_solar(api_key, content, prompt)
         ExtractionEssay.objects.create(content=refined_content, document=document)

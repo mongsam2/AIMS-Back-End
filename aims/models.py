@@ -11,7 +11,7 @@ class Extraction(models.Model):
     
 
 class ExtractionEssay(models.Model):
-    document = models.OneToOneField(Document, on_delete=models.CASCADE, related_name='extraction_essay')
+    document = models.ForeignKey(Document, on_delete=models.CASCADE, related_name='extraction_essay')
     content = models.TextField()
 
     def __str__(self):

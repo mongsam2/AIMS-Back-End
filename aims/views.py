@@ -10,7 +10,7 @@ from django.shortcuts import get_object_or_404
 
 # 모델 (데이터베이스)
 from documents.models import Document
-from aims.models import Extraction, Summarization, DocumentPassFail, Evaluation 
+from aims.models import Extraction, ExtractionEssay, Summarization, DocumentPassFail, Evaluation 
 
 # utils 파일 불러오기
 from django.conf import settings
@@ -98,14 +98,9 @@ class EvaluationView(APIView):
         except Document.DoesNotExist:
             raise NotFound(f"Document for document ID {document_id} is not found.")
         
-        # 논술 OCR 교정 
-        refine_prompt_path = os.path.join(settings.BASE_DIR, 'aims', 'utils', 'prompt_txt', 'ocr_prompt.txt')
-        with open(refine_prompt_path, 'r', encoding='utf-8') as f:
-            refine_prompt = f.read()
+        extraction_essay = ExtractionEssay.objects.get(id=document_id)
+        content = extraction_essay.content
 
-        extraction = execute_ocr(api_key, document.file_url.path)[0]
-        content = get_answer_from_solar(api_key, extraction, refine_prompt)
-        
         # 요약문 및 추출문 갖고오기
         # content의 글자 수 기반으로 1차 채점하기
         try:

@@ -1,5 +1,0 @@
-prompt1 = "무조건 한국어로 대답하고 과교정 없이 문맥 기반으로 교정만 해줘"
-prompt2 = "무조건 한국어로 대답하고 과교정 없이 문맥 기반으로 틀린 단어만 교정만 해줘"
-prompt3 = "무조건 한국어로 대답하고 과교정 없이 문맥 기반으로 틀린 단어만 교정만 해주고 단어를 덧붙이지는 마"
-prompt4 = "Always provide your response in Korean. When performing corrections, only fix spelling, grammar, or word errors that are clearly incorrect in the given context. Do not overcorrect, change the tone, or rewrite sentences unless absolutely necessary. Preserve the original meaning and style as much as possible."
-prompt5 = "You must always respond in Korean. When correcting text, do not overcorrect or change the style unnecessarily. Only fix incorrect words based on the context, while keeping the rest of the text intact."
