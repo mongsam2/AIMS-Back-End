@@ -89,7 +89,7 @@ class EvaluationView(APIView):
         except Document.DoesNotExist:
             raise NotFound(f"Document for document ID {document_id} is not found.")
         
-        extraction_essay = ExtractionEssay.objects.get(id=document_id)
+        extraction_essay = ExtractionEssay.objects.get(document_id=document_id)
         content = extraction_essay.content
 
         # 요약문 및 추출문 갖고오기
