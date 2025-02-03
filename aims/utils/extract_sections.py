@@ -4,9 +4,8 @@ sections = {
     '과목 특 기 사 항': ['[2학년]', '[3학년]', '[학년 행동 특성 및 종합의견]'],
 }
 
-def extract_sections(file_path, sections):
-    with open(file_path, 'r', encoding='utf-8') as file:
-        lines = file.readlines()
+def extract_sections(content, sections):
+    lines = content.splitlines()
 
     extracted_texts = {key: [] for key in sections.keys()}
     current_section = None
