@@ -45,20 +45,6 @@ class ExtractionView(APIView):
 
 class SummarizationView(APIView):
     def post(self, request, document_id):
-        reason = Extraction.objects.get(document_id=document_id)
-        
-        # LLM 길이 초과 문제 해결
-                
-            # 민솔이는  page_texts(ocr에서 Text 추출한 값) 이 값을 사용하면 됩니다 !
-        
-            # 추천면접질문 로직 추가 - 민솔
-            
-        '''
-        html_content = txt_to_html(page_texts)
-        pages_with_keywords = extract_pages_with_keywords(html_content)
-        parse_response = parse_selected_pages(API_KEY, file_path, pages_with_keywords)
-        solar_response = process_with_solar(API_KEY, parse_response)
-        '''
 
         # Extraction을 가져와 solar로 prompting한 결과를 response에 저장
         extraction = Extraction.objects.get(id=document_id)
