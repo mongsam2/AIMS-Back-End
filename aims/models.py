@@ -3,7 +3,7 @@ from documents.models import Document, Documentation
 
 
 class Extraction(models.Model):
-    document = models.OneToOneField(Documentation, on_delete=models.CASCADE, related_name='extraction')
+    document = models.ForeignKey(Documentation, on_delete=models.CASCADE, related_name='extraction')
     content = models.TextField()
 
     def __str__(self):
@@ -50,7 +50,7 @@ class EvaluationRange(models.Model):
 class Summarization(models.Model):
     content = models.TextField(null=True, blank=True, default='')
     question = models.TextField(null=True, blank=True, default='')
-    document = models.ForeignKey(Document, on_delete=models.CASCADE)
+    document = models.ForeignKey(Documentation, on_delete=models.CASCADE)
     memo = models.TextField(null=True, blank=True, default='')
 
     def __str__(self):

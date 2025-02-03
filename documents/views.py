@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.exceptions import NotFound
 from rest_framework.parsers import MultiPartParser, FormParser
 
-from .models import Document
+from .models import Document, Documentation
 from aims.models import Summarization, Evaluation
 
 from .serializers import DocumentSerializer, DocumentReasonsSerializer, DocumentStatusSerializer, RawDataSerializer, DocumentationSerializer
@@ -60,7 +60,7 @@ class DocumentListView(generics.ListAPIView):
 
 class StudentRecordsView(APIView):
     def get(self, request):
-        student_records = Document.objects.filter(document_type__name='학생생활기록부', state="제출").order_by('upload_date').values("id")
+        student_records = Documentation.objects.filter(document_type__name='학생생활기록부', state="제출").order_by('upload_date').values("id")
         answer = []
         for record in student_records:
             answer.append(record['id'])

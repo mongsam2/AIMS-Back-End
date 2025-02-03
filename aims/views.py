@@ -9,7 +9,7 @@ from django.conf import settings
 from django.shortcuts import get_object_or_404
 
 # 모델 (데이터베이스)
-from documents.models import Document
+from documents.models import Document, Documentation
 from aims.models import Extraction, ExtractionEssay, Summarization, DocumentPassFail, Evaluation 
 
 # utils 파일 불러오기
@@ -45,41 +45,32 @@ class ExtractionView(APIView):
 
 class SummarizationView(APIView):
     def post(self, request, document_id):
-        reason = Extraction.objects.get(document_id=document_id)
-        
-        # LLM 길이 초과 문제 해결
-                
-            # 민솔이는  page_texts(ocr에서 Text 추출한 값) 이 값을 사용하면 됩니다 !
-        
-            # 추천면접질문 로직 추가 - 민솔
-            
-        '''
-        html_content = txt_to_html(page_texts)
-        pages_with_keywords = extract_pages_with_keywords(html_content)
-        parse_response = parse_selected_pages(API_KEY, file_path, pages_with_keywords)
-        solar_response = process_with_solar(API_KEY, parse_response)
-        '''
 
-        # Extraction을 가져와 solar로 prompting한 결과를 response에 저장
-        extraction = Extraction.objects.get(id=document_id)
+        # Extraction을 가져와 solar로 prompting한 결과를 저장
+        extraction = Extraction.objects.get(document_id=document_id)
+        content = extraction.content
 
-        prompt_file = os.path.join(settings.BASE_DIR, 'aims', 'utils', 'student_record_prompt.txt')  
+        summary_prompt_path = os.path.join(settings.BASE_DIR, 'aims', 'utils', 'prompt_txt', 'student_record_prompt.txt')
+        interview_prompt_path = os.path.join(settings.BASE_DIR, 'aims', 'utils', 'prompt_txt', 'interview_questions.txt')
         
-        with open(prompt_file, 'r', encoding='utf-8') as file:
-            prompt_content = file.read()
+        with open(summary_prompt_path, 'r', encoding='utf-8') as f1,\
+             open(interview_prompt_path, 'r', encoding='utf-8') as f2:
+            summary_prompt = f1.read()
+            interview_prompt = f2.read()
         
-        response = get_answer_from_solar(api_key, extraction, prompt_content)
+        summary = get_answer_from_solar(api_key, content, summary_prompt)
+        interview = get_answer_from_solar(api_key, content, interview_prompt)
 
         try:
-            document = Document.objects.get(id=document_id)
-        except Document.DoesNotExist:
+            document = Documentation.objects.get(id=document_id)
+        except Documentation.DoesNotExist:
             raise NotFound(f"Document for document ID {document_id} is not found.")
         
-        Summarization.objects.create(content=response, document=document)
+        Summarization.objects.create(content=summary, document=document, question=interview)
 
         return Response({
-            'solar_response': response
-            # 추천된 면접 질문 목록 추가 - 민솔
+            'summary': summary,
+            'interview_questions' : interview
         })
     
 
