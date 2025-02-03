@@ -31,7 +31,7 @@ def process_ocr_task_for_essay(document_id, api_key):
     """
     try:
         document = Document.objects.get(id=document_id)
-        content = execute_ocr(api_key, document.file_url.path)[0]
+        content = execute_ocr(api_key, document.file_url.path)
         
         prompt = "Always provide your response in Korean. When performing corrections, only fix spelling, grammar, or word errors that are clearly incorrect in the given context. Do not overcorrect, change the tone, or rewrite sentences unless absolutely necessary. Preserve the original meaning and style as much as possible."
 
