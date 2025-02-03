@@ -35,7 +35,6 @@ def process_ocr_task_for_essay(document_id, api_key):
     try:
         document = Document.objects.get(id=document_id)
         content = execute_ocr(api_key, document.file_url.path)
-        content = str(content)
         
         prompt_path = os.path.join(settings.BASE_DIR, 'aims', 'utils', 'prompt_txt', 'refine_prompt.txt')
         with open(prompt_path, 'r', encoding='utf-8') as f:

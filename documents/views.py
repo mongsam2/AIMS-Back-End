@@ -13,8 +13,12 @@ from aims.serializers import EvaluationSerializer, SummarizationSerializer, Essa
 
 from django.core.exceptions import ValidationError
 from django.conf import settings
+
+from .tasks import process_ocr_task, process_ocr_task_for_essay
+from .utils.essay_preprocess import preprocess_pdf
+
 api_key = settings.API_KEY
-from documents.tasks import process_ocr_task, process_ocr_task_for_essay
+
 
 class DocumentCreateView(generics.CreateAPIView):
     serializer_class = DocumentSerializer
@@ -30,6 +34,7 @@ class DocumentCreateView(generics.CreateAPIView):
         try:
             instance = serializer.save()
 
+            preprocess_pdf(instance.file_url.path, instance.file_url.path)
             process_ocr_task_for_essay.delay(instance.id, api_key)
 
             return instance
