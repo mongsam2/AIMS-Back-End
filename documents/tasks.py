@@ -36,12 +36,19 @@ def process_ocr_task_for_essay(document_id, api_key):
         document = Document.objects.get(id=document_id)
         content, confidence = execute_ocr(api_key, document.file_url.path)
         
-        prompt_path = os.path.join(settings.BASE_DIR, 'aims', 'utils', 'prompt_txt', 'refine_prompt.txt')
-        with open(prompt_path, 'r', encoding='utf-8') as f:
-            prompt = f.read()
+        threshold = 0.8
 
-        refined_content = get_answer_from_solar(api_key, content, prompt)
-        ExtractionEssay.objects.create(content=refined_content, document=document)
+        # OCR 인식률 저하 시 오류 메시지 저장
+        if confidence <= threshold:
+            warning = f"Warning: OCR confidence is low ({confidence:.2f}). Text may be inaccurate.\n"
+            ExtractionEssay.objects.create(content=warning, document=document)
+        else:
+            prompt_path = os.path.join(settings.BASE_DIR, 'aims', 'utils', 'prompt_txt', 'refine_prompt.txt')
+            with open(prompt_path, 'r', encoding='utf-8') as f:
+                prompt = f.read()
+
+            refined_content = get_answer_from_solar(api_key, content, prompt)
+            ExtractionEssay.objects.create(content=refined_content, document=document)
             
     except Document.DoesNotExist:
         raise ValueError(f"Document with ID {document_id} does not exist")
