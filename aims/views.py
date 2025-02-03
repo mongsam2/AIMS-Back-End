@@ -47,7 +47,8 @@ class SummarizationView(APIView):
     def post(self, request, document_id):
 
         # Extraction을 가져와 solar로 prompting한 결과를 저장
-        extraction = Extraction.objects.get(id=document_id)
+        extraction = Extraction.objects.get(document_id=document_id)
+        content = extraction.content
 
         summary_prompt_path = os.path.join(settings.BASE_DIR, 'aims', 'utils', 'prompt_txt', 'student_record_prompt.txt')
         interview_prompt_path = os.path.join(settings.BASE_DIR, 'aims', 'utils', 'prompt_txt', 'interview_questions.txt')
@@ -57,8 +58,8 @@ class SummarizationView(APIView):
             summary_prompt = f1.read()
             interview_prompt = f2.read()
         
-        summary = get_answer_from_solar(api_key, extraction, summary_prompt)
-        interview = get_answer_from_solar(api_key, extraction, interview_prompt)
+        summary = get_answer_from_solar(api_key, content, summary_prompt)
+        interview = get_answer_from_solar(api_key, content, interview_prompt)
 
         try:
             document = Documentation.objects.get(id=document_id)
