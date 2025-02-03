@@ -50,7 +50,7 @@ class EvaluationRange(models.Model):
 class Summarization(models.Model):
     content = models.TextField(null=True, blank=True, default='')
     question = models.TextField(null=True, blank=True, default='')
-    document = models.ForeignKey(Document, on_delete=models.CASCADE)
+    document = models.ForeignKey(Documentation, on_delete=models.CASCADE)
     memo = models.TextField(null=True, blank=True, default='')
 
     def __str__(self):

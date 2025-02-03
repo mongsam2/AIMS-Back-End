@@ -9,7 +9,7 @@ from django.conf import settings
 from django.shortcuts import get_object_or_404
 
 # 모델 (데이터베이스)
-from documents.models import Document
+from documents.models import Document, Documentation
 from aims.models import Extraction, ExtractionEssay, Summarization, DocumentPassFail, Evaluation 
 
 # utils 파일 불러오기
@@ -61,8 +61,8 @@ class SummarizationView(APIView):
         interview = get_answer_from_solar(api_key, extraction, interview_prompt)
 
         try:
-            document = Document.objects.get(id=document_id)
-        except Document.DoesNotExist:
+            document = Documentation.objects.get(id=document_id)
+        except Documentation.DoesNotExist:
             raise NotFound(f"Document for document ID {document_id} is not found.")
         
         Summarization.objects.create(content=summary, document=document, question=interview)
