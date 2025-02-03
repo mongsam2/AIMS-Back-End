@@ -3,7 +3,7 @@ from documents.models import Document, Documentation
 
 
 class Extraction(models.Model):
-    document = models.OneToOneField(Documentation, on_delete=models.CASCADE, related_name='extraction')
+    document = models.ForeignKey(Documentation, on_delete=models.CASCADE, related_name='extraction')
     content = models.TextField()
 
     def __str__(self):
