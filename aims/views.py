@@ -19,6 +19,7 @@ from aims.utils.essay_evaluate import evaluate
 
 from aims.utils.execute_apis import execute_ocr, get_answer_from_solar, parse_selected_pages
 from aims.utils.summarization import txt_to_html, extract_pages_with_keywords, process_with_solar
+from aims.utils.extract_sections import extract_sections, sections  
 
 # serializers
 from aims.serializers import EssayCriteriaSerializer
@@ -45,21 +46,21 @@ class ExtractionView(APIView):
 
 class SummarizationView(APIView):
     def post(self, request, document_id):
-
-        # Extraction을 가져와 solar로 prompting한 결과를 저장
         extraction = Extraction.objects.get(document_id=document_id)
-        content = extraction.content
+        content = extraction.content  
+        
+        extracted_texts = extract_sections(content, sections)
 
         summary_prompt_path = os.path.join(settings.BASE_DIR, 'aims', 'utils', 'prompt_txt', 'student_record_prompt.txt')
         interview_prompt_path = os.path.join(settings.BASE_DIR, 'aims', 'utils', 'prompt_txt', 'interview_questions.txt')
         
         with open(summary_prompt_path, 'r', encoding='utf-8') as f1,\
-             open(interview_prompt_path, 'r', encoding='utf-8') as f2:
+            open(interview_prompt_path, 'r', encoding='utf-8') as f2:
             summary_prompt = f1.read()
             interview_prompt = f2.read()
         
-        summary = get_answer_from_solar(api_key, content, summary_prompt)
-        interview = get_answer_from_solar(api_key, content, interview_prompt)
+        summary = get_answer_from_solar(api_key, extracted_texts, summary_prompt)
+        interview = get_answer_from_solar(api_key, extracted_texts, interview_prompt)
 
         try:
             document = Documentation.objects.get(id=document_id)
