@@ -152,8 +152,9 @@ class DocumentationCreateView(generics.CreateAPIView):
             if not any(instance.file_url.name.lower().endswith(ext) for ext in allowed_extensions):
                 raise ValidationError("지원되지 않는 파일 형식입니다. PDF, PNG, JPG만 가능합니다.")
 
-            process_ocr_task.delay(instance.id, api_key)
+            
             process_inference.delay(instance.id)
+            process_ocr_task.delay(instance.id, api_key)
 
             return instance
         
