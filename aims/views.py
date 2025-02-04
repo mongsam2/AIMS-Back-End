@@ -92,8 +92,8 @@ class EvaluationView(APIView):
         extraction_essay = ExtractionEssay.objects.get(document_id=document_id)
         content = extraction_essay.content
 
-        # OCR 인식률 저하 시 오류 메시지 저장
-        if 'Warning: OCR confidence is low' in content:
+        # OCR 인식률 저하 시 경고 메시지 저장
+        if '경고: OCR 신뢰도가 낮습니다' in content:
             Evaluation.objects.create(content=content, document=document, memo=None)
             return Response({'message': 'Summarization failed', 'summary': content, 'evaluate': None})
         

@@ -38,9 +38,9 @@ def process_ocr_task_for_essay(document_id, api_key):
         
         threshold = 0.8
 
-        # OCR 인식률 저하 시 오류 메시지 저장
+        # OCR 인식률 저하 시 경고 메시지 저장
         if confidence <= threshold:
-            warning = f"Warning: OCR confidence is low ({confidence:.2f}). Text may be inaccurate.\n"
+            warning = f'경고: OCR 신뢰도가 낮습니다 ({confidence:.2f}). 텍스트가 부정확할 수 있습니다.\n'
             ExtractionEssay.objects.create(content=warning, document=document)
         else:
             prompt_path = os.path.join(settings.BASE_DIR, 'aims', 'utils', 'prompt_txt', 'refine_prompt.txt')
