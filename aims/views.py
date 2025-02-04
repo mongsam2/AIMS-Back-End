@@ -90,9 +90,14 @@ class EvaluationView(APIView):
         except Document.DoesNotExist:
             raise NotFound(f"Document for document ID {document_id} is not found.")
         
-        extraction_essay = ExtractionEssay.objects.get(id=document_id)
+        extraction_essay = ExtractionEssay.objects.get(document_id=document_id)
         content = extraction_essay.content
 
+        # OCR 인식률 저하 시 경고 메시지 저장
+        if '경고: OCR 신뢰도가 낮습니다' in content:
+            Evaluation.objects.create(content=content, document=document, memo=None)
+            return Response({'message': 'Summarization failed', 'summary': content, 'evaluate': None})
+        
         # 요약문 및 추출문 갖고오기
         # content의 글자 수 기반으로 1차 채점하기
         try:
