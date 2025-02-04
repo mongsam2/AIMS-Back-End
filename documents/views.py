@@ -14,7 +14,7 @@ from aims.serializers import EvaluationSerializer, SummarizationSerializer, Essa
 from django.core.exceptions import ValidationError
 from django.conf import settings
 
-from .tasks import process_ocr_task, process_ocr_task_for_essay
+from .tasks import process_ocr_task, process_ocr_task_for_essay, process_inference
 from .utils.essay_preprocess import preprocess_pdf
 
 api_key = settings.API_KEY
@@ -153,6 +153,7 @@ class DocumentationCreateView(generics.CreateAPIView):
                 raise ValidationError("지원되지 않는 파일 형식입니다. PDF, PNG, JPG만 가능합니다.")
 
             process_ocr_task.delay(instance.id, api_key)
+            process_inference.delay(instance.id)
 
             return instance
         
