@@ -5,6 +5,7 @@ from documents.utils.essay_preprocess import preprocess_pdf
 from django.db import models
 from django.conf import settings
 api_key = settings.API_KEY
+from model_utils import FieldTracker
 
 
 class DocumentTypeChoices(models.TextChoices):
@@ -70,6 +71,8 @@ class Documentation(models.Model):
         return f'documents/{filename}'
     
     file_url = models.FileField(upload_to=upload_to)
+    
+    tracker = FieldTracker()
 
     def __str__(self):
         return f"Documentation for Extraction {self.upload_date}"

@@ -41,3 +41,10 @@ urllib3==2.3.0
 redis>=5.0
 celery[redis]>=5.2
 django-celery-results>=2.4
+
+torch
+torchvision
+onnx==1.17.0
+onnxruntime==1.20.1
+pdf2image
+django-model-utils==5.0.0
