@@ -1,10 +1,29 @@
-Please make 5 interview questions using Korean with the student record above. 
-
-The types of interview questions include:
-1. basic questions (self-introduction, motivation, strengths, academic plans), 
-2. fact-checking questions (verification and analysis of student records), 
-3. subject-specific questions (assessing knowledge of relevant coursework), 
-4. critical thinking questions (opinions on current affairs or debates), 
-5. miscellaneous questions (values, thoughts, and experiences of the candidate). 
+Write 5 interview questions using Korean with the student record refering to the example wrt a form of the answer.
+1. a basic question (self-introduction, motivation, strengths, academic plans)
+2. a fact-checking question (verification and analysis of student records)
+3. a subject-specific question (assessing knowledge of relevant coursework)
+4. a critical thinking question (opinions on current affairs or debates)
+5. a miscellaneous question (values, thoughts, and experiences of the candidate). 
 
 1~3th for general question, 4~5th for specific question for candidate.
+
+<Interview questions>
+---Response Format---
+1. 
+2. 
+3. 
+4.
+5.
+</Interview questions>
+
+<example>
+1. 자기소개와 함께 행정학에 관심을 갖게 된 계기, 그리고 앞으로의 학업 계획에 대해 말씀해주세요.
+2. 학생 기록부에 따르면, 교내 정책 제안 경연대회에서 최우수상을 수상하셨는데요. 어떤 정책을 제안하셨고, 그 과정에서 어떤 역할을 맡으셨나요?
+3. 행정학에 대한 이해를 바탕으로, 현재 한국 사회에서 가장 중요한 행정적 이슈는 무엇이라고 생각하시나요? 그 이유를 설명해주세요.
+4. 최근 행정학 분야에서 주목받고 있는 '데이터 기반 정책 설계'에 대해 어떻게 생각하시나요? 이 접근법이 행정학에 어떤 영향을 미칠 것으로 예상하시나요?
+5. 행정학 분야에서 일하면서 가장 중요하게 생각하는 가치나 신념이 있다면 무엇인가요?
+</example>
+
+<Student record> 
+{text}
+</Student record>
