@@ -54,26 +54,33 @@ def parse_selected_pages(api_key, file_path, pages):
             return {'error': 'PDF 파싱 실패', 'status_code': response.status_code}
         
 
-def get_answer_from_solar(api_key, content, prompt, temperature=0.7):
+def get_answer_from_solar(api_key, content, prompt, temperature=0.7, interview=False):
     client = OpenAI(
         api_key=api_key,
         base_url="https://api.upstage.ai/v1/solar"
     )
-
-    response = client.chat.completions.create(
+    if interview:
+        response = client.chat.completions.create(
+        model="solar-pro",
+        messages=[{"role": "user", "content": prompt.format(text=content)}],
+        stream=False,
+        temperature=temperature    
+        )
+    else:
+        response = client.chat.completions.create(
         model="solar-pro",
         messages=[
-        {
-            "role": "system",
-            "content": prompt
-        },
-        {
-            "role": "user",
-            "content": content
-        }
-    ],
-        stream=False,
-        temperature=temperature
-    )
+            {
+                "role": "system",
+                "content": prompt
+            },
+            {
+                "role": "user",
+                "content": content
+            }
+        ],
+            stream=False,
+            temperature=temperature
+        )
 
     return response.choices[0].message.content

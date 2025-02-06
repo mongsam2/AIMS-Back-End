@@ -60,7 +60,7 @@ class SummarizationView(APIView):
             interview_prompt = f2.read()
         
         summary = get_answer_from_solar(api_key, extracted_texts, summary_prompt)
-        interview = get_answer_from_solar(api_key, extracted_texts, interview_prompt)
+        interview = get_answer_from_solar(api_key, extracted_texts, interview_prompt, 0., True)
 
         try:
             document = Documentation.objects.get(id=document_id)
