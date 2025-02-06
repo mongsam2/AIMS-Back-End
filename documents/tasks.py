@@ -9,8 +9,8 @@ from aims.tasks import execute_ocr, get_answer_from_solar
 
 import torch
 import numpy as np
-from documents.utils.inference_with_pytorch import load_model
-from documents.utils.inference_onnx import load_onnx_model
+from aims_be.documents.utils.load_model import load_pytorch_model
+from aims_be.documents.utils.load_model import load_onnx_model
 
 from documents.utils.data_loader import preprocess_image
 
@@ -99,7 +99,7 @@ def process_inference(document_id):
 @shared_task
 def predict_document_type(file_path, class_labels):
     
-    model = load_model()
+    model = load_pytorch_model()
     model.eval()
 
     image = preprocess_image(file_path)
