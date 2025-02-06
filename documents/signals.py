@@ -1,10 +1,9 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from documents.models import Documentation, DocumentStateChoices, DocumentType
+from documents.models import Documentation, DocumentStateChoices
 from aims.models import Extraction, ValidationCriteria
 from students.models import Student
 
-from aims.utils.extract_regx import extract_student_name
 from aims.utils.execute_apis import get_answer_from_solar
 from documents.utils.validate_docs import is_date_valid
 
