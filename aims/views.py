@@ -6,25 +6,25 @@ from rest_framework.views import APIView
 from rest_framework.exceptions import NotFound, APIException
 
 from django.conf import settings
-from django.shortcuts import get_object_or_404
 
 # 모델 (데이터베이스)
 from documents.models import Document, Documentation
-from aims.models import Extraction, ExtractionEssay, Summarization, DocumentPassFail, Evaluation 
+from aims.models import Extraction, ExtractionEssay, Summarization, Evaluation 
 
 # utils 파일 불러오기
 from django.conf import settings
 
 from aims.utils.essay_evaluate import evaluate
 
-from aims.utils.execute_apis import execute_ocr, get_answer_from_solar, parse_selected_pages
-from aims.utils.summarization import txt_to_html, extract_pages_with_keywords, process_with_solar
+from aims.tasks import execute_ocr, get_answer_from_solar
 from aims.utils.extract_sections import extract_sections, sections  
 
 # serializers
 from aims.serializers import EssayCriteriaSerializer
 
+
 api_key = settings.API_KEY
+
 
 def get_document_path(document_id):
     try:
@@ -43,6 +43,7 @@ class ExtractionView(APIView):
         Extraction.objects.create(content=content, document=document_id)
 
         return Response({'message': content})
+
 
 class SummarizationView(APIView):
     def post(self, request, document_id):

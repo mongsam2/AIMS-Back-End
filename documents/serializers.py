@@ -1,10 +1,6 @@
-from rest_framework.serializers import ModelSerializer, SerializerMethodField
-from rest_framework import serializers
+from rest_framework.serializers import ModelSerializer
 from .models import Document, RawData, Documentation
-from aims.models import Summarization
-from students.models import Student
 from aims.serializers import DocumentPassFailSerializer
-import os
 
 
 class DocumentSerializer(ModelSerializer):

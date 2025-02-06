@@ -1,10 +1,7 @@
-import os
-
-from documents.utils.essay_preprocess import preprocess_pdf
-
 from django.db import models
 from django.conf import settings
 api_key = settings.API_KEY
+
 from model_utils import FieldTracker
 
 

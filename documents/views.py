@@ -3,21 +3,19 @@ from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import NotFound
-from rest_framework.parsers import MultiPartParser, FormParser
 
 from .models import Document, Documentation
 from aims.models import Summarization, Evaluation
 
-from .serializers import DocumentSerializer, DocumentReasonsSerializer, DocumentStatusSerializer, RawDataSerializer, DocumentationSerializer
+from .serializers import DocumentSerializer, DocumentReasonsSerializer, DocumentStatusSerializer, DocumentationSerializer
 from aims.serializers import EvaluationSerializer, SummarizationSerializer, EssayCriteriaSerializer
 
 from django.core.exceptions import ValidationError
 from django.conf import settings
+api_key = settings.API_KEY
 
 from .tasks import process_ocr_task, process_ocr_task_for_essay, process_inference
 from .utils.essay_preprocess import preprocess_pdf
-
-api_key = settings.API_KEY
 
 
 class DocumentCreateView(generics.CreateAPIView):
