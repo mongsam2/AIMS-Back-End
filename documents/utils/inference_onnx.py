@@ -1,9 +1,7 @@
 import os
 import onnxruntime
-import numpy as np
 
 from django.conf import settings
-from documents.utils.data_loader import preprocess_image
 
 
 MODEL_DIR = os.path.join(settings.BASE_DIR, "documents/models")
@@ -22,15 +20,3 @@ def load_onnx_model(model_name="student_model.onnx"):
     return session
 
 
-def predict_onnx(image_path, class_labels):
-    
-    session = load_onnx_model()
-    image = preprocess_image(image_path)
-    
-    inputs = {session.get_inputs()[0].name: image}
-    output = session.run(None, inputs)[0]
-
-    predicted_class = np.argmax(output, axis=1).item()
-    confidence = np.max(output).item()
-
-    return class_labels[predicted_class], confidence

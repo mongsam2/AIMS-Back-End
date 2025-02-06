@@ -5,10 +5,14 @@ from django.conf import settings
 from .models import Documentation, Document, DocumentType, DocumentStateChoices
 
 from aims.models import Extraction, ExtractionEssay
-from aims.utils.execute_apis import execute_ocr, get_answer_from_solar
+from aims.tasks import execute_ocr, get_answer_from_solar
 
-from documents.utils.inference_with_pytorch import predict_document_type
-from documents.utils.inference_onnx import predict_onnx
+import torch
+import numpy as np
+from documents.utils.inference_with_pytorch import load_model
+from documents.utils.inference_onnx import load_onnx_model
+
+from documents.utils.data_loader import preprocess_image
 
 
 @shared_task
@@ -17,13 +21,10 @@ def process_ocr_task(document_id, api_key):
     비동기 OCR 태스크
     """
     try:
-        #document = RawData.objects.get(id=document_id)
         document = Documentation.objects.get(id=document_id)
         content, confidence = execute_ocr(api_key, document.file_url.path)
         Extraction.objects.create(content=content, document=document)
             
-
-    #except RawData.DoesNotExist:
     except Documentation.DoesNotExist:
         raise ValueError(f"Document with ID {document_id} does not exist")
     except Exception as e:
@@ -93,3 +94,37 @@ def process_inference(document_id):
     
     except Exception as e:
         return f"Inference 실패: {str(e)}"
+    
+
+@shared_task
+def predict_document_type(file_path, class_labels):
+    
+    model = load_model()
+    model.eval()
+
+    image = preprocess_image(file_path)
+    
+    with torch.no_grad():
+        output = model(image)
+        probabilities = torch.nn.functional.softmax(output, dim=1)
+        predicted_class = torch.argmax(probabilities, dim=1).item()
+
+    predicted_label = class_labels[predicted_class]
+    confidence = probabilities[0][predicted_class].item()
+    
+    return predicted_label, confidence
+
+
+@shared_task
+def predict_onnx(image_path, class_labels):
+    
+    session = load_onnx_model()
+    image = preprocess_image(image_path)
+    
+    inputs = {session.get_inputs()[0].name: image}
+    output = session.run(None, inputs)[0]
+
+    predicted_class = np.argmax(output, axis=1).item()
+    confidence = np.max(output).item()
+
+    return class_labels[predicted_class], confidence
