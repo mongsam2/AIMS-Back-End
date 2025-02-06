@@ -3,7 +3,7 @@ import json
 import os
 from django.conf import settings
 
-from aims.utils.execute_apis import get_answer_from_solar
+from aims.tasks import get_answer_from_solar
 
 
 def txt_to_html(page_texts):
