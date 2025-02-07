@@ -177,3 +177,5 @@ CELERY_TIMEZONE = 'Asia/Seoul'
 
 #CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 LABELS = ["검정고시합격증명서", "국민체력100인증서", "기초생활수급자증명서", "주민등록초본", "체력평가", "생활기록부대체양식"]
+
+VALID_DATE = "2024-09-03"
