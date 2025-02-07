@@ -22,7 +22,7 @@ def process_ocr_task(document_id, api_key):
     """
     try:
         document = Documentation.objects.get(id=document_id)
-        content, confidence = execute_ocr(api_key, document.file_url.path)
+        content, confidence = execute_ocr.delay(api_key, document.file_url.path)
         Extraction.objects.create(content=content, document=document)
             
     except Documentation.DoesNotExist:
@@ -38,7 +38,7 @@ def process_ocr_task_for_essay(document_id, api_key):
     """
     try:
         document = Document.objects.get(id=document_id)
-        content, confidence = execute_ocr(api_key, document.file_url.path)
+        content, confidence = execute_ocr.delay(api_key, document.file_url.path)
         
         threshold = 0.8
 
@@ -51,7 +51,7 @@ def process_ocr_task_for_essay(document_id, api_key):
             with open(prompt_path, 'r', encoding='utf-8') as f:
                 prompt = f.read()
 
-            refined_content = get_answer_from_solar(api_key, content, prompt)
+            refined_content = get_answer_from_solar.delay(api_key, content, prompt)
             ExtractionEssay.objects.create(content=refined_content, document=document)
             
     except Document.DoesNotExist:

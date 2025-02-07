@@ -39,7 +39,7 @@ class ExtractionView(APIView):
     def post(self, request, document_id):
         file_path = get_document_path(document_id)
         
-        content = execute_ocr(api_key, file_path)
+        content = execute_ocr.delay(api_key, file_path)
         Extraction.objects.create(content=content, document=document_id)
 
         return Response({'message': content})
@@ -60,8 +60,8 @@ class SummarizationView(APIView):
             summary_prompt = f1.read()
             interview_prompt = f2.read()
         
-        summary = get_answer_from_solar(api_key, extracted_texts, summary_prompt)
-        interview = get_answer_from_solar(api_key, extracted_texts, interview_prompt, 0., True)
+        summary = get_answer_from_solar.delay(api_key, extracted_texts, summary_prompt)
+        interview = get_answer_from_solar.delay(api_key, extracted_texts, interview_prompt, 0., True)
 
         try:
             document = Documentation.objects.get(id=document_id)

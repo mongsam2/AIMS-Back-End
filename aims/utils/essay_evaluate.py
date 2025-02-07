@@ -23,7 +23,7 @@ def evaluate(api_key, content, criteria):
         raise APIException(f"Prompt file not found at path: {PROMPT_PATHS}")
 
     rule = criteria.get("content", "")
-    summary_extract = get_answer_from_solar(api_key, content, f"{prompt}\n{rule}\n{prompt2}")
+    summary_extract = get_answer_from_solar.delay(api_key, content, f"{prompt}\n{rule}\n{prompt2}")
     
     # 글자 수 계산
     char_cnt = len(content)

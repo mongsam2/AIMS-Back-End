@@ -46,6 +46,6 @@ def process_with_solar(api_key, parse_response):
         prompt_content = file.read()
 
     parse_text = json.dumps(parse_response, ensure_ascii=False, indent=4)
-    response = get_answer_from_solar(api_key, parse_text, prompt_content)
+    response = get_answer_from_solar.delay(api_key, parse_text, prompt_content)
     
     return response
