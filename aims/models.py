@@ -5,6 +5,8 @@ from documents.models import Document, Documentation
 class Extraction(models.Model):
     document = models.ForeignKey(Documentation, on_delete=models.CASCADE, related_name='extraction')
     content = models.TextField()
+    vector = models.TextField(null=True, blank=True)
+    document_type = models.CharField(max_length=15, null=True, blank=True)
 
     def __str__(self):
         return f"Extraction for {self.document.id}"

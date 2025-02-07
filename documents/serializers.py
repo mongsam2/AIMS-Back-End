@@ -44,6 +44,6 @@ class RawDataSerializer(ModelSerializer):
 class DocumentationSerializer(ModelSerializer):
     class Meta:
         model = Documentation
-        fields = ('id', 'student_id', 'document_type', 'file_url', 'state')
+        fields = ('id', 'student_id', 'document_type', 'file_url', 'state', 'issue_date')
 
         
