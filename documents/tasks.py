@@ -9,8 +9,8 @@ from aims.tasks import execute_ocr, get_answer_from_solar
 
 import torch
 import numpy as np
-from aims_be.documents.utils.load_model import load_pytorch_model
-from aims_be.documents.utils.load_model import load_onnx_model
+from documents.utils.load_model import load_pytorch_model
+from documents.utils.load_model import load_onnx_model
 
 from documents.utils.data_loader import preprocess_image
 
