@@ -3,7 +3,7 @@ import json
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from documents.models import Documentation, DocumentStateChoices
-from aims.models import Extraction, ValidationCriteria
+from aims.models import Extraction, ValidationCriteria, DocumentPassFail, FailedConditionChoices
 from students.models import Student
 
 from aims.tasks import get_answer_from_solar, execute_embedding
@@ -129,3 +129,40 @@ def save_extraction_type(sender, instance, **kwargs):
     except Exception as e:
         print(f"유사도 계산 오류 발생: {e}")
 
+
+
+@receiver(post_save, sender=Extraction)
+def double_check_doc_type(sender, instance, **kwargs):
+    """
+    Extraction 테이블의 document_type과 Documentation 테이블의 document_type을 비교하여
+    상태(state)를 '제출' 또는 '검토'로 변경하고 사유를 DocumentPassFail에 저장하는 시그널
+    """
+    if not instance.document_type:
+        print(f"Extraction {instance.id}의 document_type이 비어있음")
+        return
+    
+    try:
+        documentation = Documentation.objects.filter(extraction=instance).first()
+        doc_pf = DocumentPassFail.objects.filter()
+
+        if not documentation:
+            print("연결된 Documentation을 찾을 수 없습니다.")
+            return
+
+        valid = is_doc_type_valid(documentation.document_type, instance.document_type)
+        if valid:
+            new_state = DocumentStateChoices.제출
+            print(f"🟢 문서 {documentation.id}의 상태가 '제출'로 변경되었습니다.")
+        else:
+            new_state = DocumentStateChoices.검토
+            failed_condition = FailedConditionChoices.UNMATCHED_DOC_TYPE
+            DocumentPassFail.objects.create(document_id=documentation, is_valid=False, page=1, failed_condition=failed_condition)
+            print(f"🟡 문서 {documentation.id}의 상태가 '검토'로 변경되었습니다. (Extraction과 문서 유형 불일치)")
+
+
+        Documentation.objects.filter(id=instance.id).update(state=new_state)
+        
+        print(f"문서 {instance.id}의 상태가 '{new_state}'로 변경됨")
+
+    except Exception as e:
+        print(f" {e}")
