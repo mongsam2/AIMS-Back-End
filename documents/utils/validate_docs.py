@@ -25,8 +25,10 @@ def is_date_valid(date_str):
         return False
     
 
-def is_doc_type_valid():
-    pass
+def is_doc_type_valid(e_type, d_type):
+    if e_type == d_type:
+        return True
+    else: return False
 
 
 def similarity(queries, text_vectors):
