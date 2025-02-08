@@ -64,6 +64,7 @@ class Documentation(models.Model):
     state = models.CharField(max_length=10, choices=DocumentStateChoices.choices, default=DocumentStateChoices.미제출)
     upload_date = models.DateTimeField(auto_now_add=True)
     issue_date = models.DateField(null=True, blank=True)
+    confidence = models.FloatField(default=0.)
 
     def upload_to(instance, filename):
         return f'documents/{filename}'

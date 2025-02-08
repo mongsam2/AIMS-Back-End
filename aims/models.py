@@ -16,7 +16,7 @@ class Extraction(models.Model):
     document = models.ForeignKey(Documentation, on_delete=models.CASCADE, related_name='extraction')
     content = models.TextField()
     vector = models.TextField(null=True, blank=True)
-    document_type = models.CharField(max_length=15, null=True, blank=True)
+    title = models.CharField(max_length=15, null=True, blank=True)
 
     def __str__(self):
         return f"Extraction for {self.document.id}"
@@ -31,11 +31,9 @@ class ExtractionEssay(models.Model):
 
 
 class DocumentPassFail(models.Model):
-    document_id = models.ForeignKey(Document, on_delete=models.CASCADE, related_name='reasons') 
+    document_id = models.ForeignKey(Documentation, on_delete=models.CASCADE, related_name='reasons') 
     is_valid = models.BooleanField(default=False)
-
-    page = models.IntegerField()
-    failed_conditions = models.CharField(max_length=50, choices=FailedConditionChoices.choices, default=FailedConditionChoices.NONE)
+    content = models.CharField(max_length=50, choices=FailedConditionChoices.choices, default=FailedConditionChoices.NONE)
 
     def __str__(self):
         return f"{self.document_id} 부적합 이유"
