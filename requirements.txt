@@ -48,3 +48,4 @@ onnx==1.17.0
 onnxruntime==1.20.1
 pdf2image
 django-model-utils==5.0.0
+scikit-learn
