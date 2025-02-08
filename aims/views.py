@@ -1,6 +1,7 @@
 import os
 import requests
 
+from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.exceptions import NotFound, APIException
@@ -36,13 +37,36 @@ def get_document_path(document_id):
 
 
 class ExtractionView(APIView):
-    def post(self, request, document_id):
-        file_path = get_document_path(document_id)
-        
-        content = execute_ocr.delay(api_key, file_path)
-        Extraction.objects.create(content=content, document=document_id)
+    def get(self, request, document_id):
+        try:
+            extraction = Extraction.objects.get(document=document_id)
+            return Response(
+                {
+                    "document_id": extraction.document.id,
+                    "content": extraction.content,
+                },
+                status=status.HTTP_200_OK
+                )
+        except Extraction.DoesNotExist:
+            return Response(
+                {"error": f"Documentation ID {document_id}에 대한 Extraction이 없음"},
+                status=status.HTTP_404_NOT_FOUND
+            )
 
-        return Response({'message': content})
+    # Extracion post 기능 안쓰면 삭제    
+    # def post(self, request, document_id):
+    #     file_path = get_document_path(document_id)
+
+    #     existing_extraction = Extraction.objects.filter(document=document_id).first()
+
+    #     if existing_extraction:
+    #         print(f"Documentation ID {document_id}에 대한 Extraction이 이미 있음")
+    #         return Response({'message': 'OCR 이미 실행됨', 'extraction_id': existing_extraction.id})
+        
+    #     content = execute_ocr.delay(api_key, file_path)
+    #     Extraction.objects.create(content=content, document=document_id)
+
+    #     return Response({'message': content})
 
 
 class SummarizationView(APIView):
@@ -77,6 +101,7 @@ class SummarizationView(APIView):
     
 
 class DocumentPassFailView(APIView):
+
     def post(self, request, document_id):
         file_path = get_document_path(document_id)
         
