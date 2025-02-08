@@ -217,7 +217,7 @@ def process_ocr_task_for_essay(document_id, api_key):
             with open(prompt_path, 'r', encoding='utf-8') as f:
                 prompt = f.read()
 
-            refined_content = get_answer_from_solar.delay(api_key, content, prompt)
+            refined_content = get_answer_from_solar(api_key, content, prompt)
             ExtractionEssay.objects.create(content=refined_content, document=document)
             
     except Document.DoesNotExist:
