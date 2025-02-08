@@ -14,8 +14,9 @@ from django.core.exceptions import ValidationError
 from django.conf import settings
 api_key = settings.API_KEY
 
-from .tasks import process_ocr_task, process_ocr_task_for_essay, process_inference
+from .tasks import process_ocr_task_for_essay
 from .utils.essay_preprocess import preprocess_pdf
+from documents.utils.data_creater import process_inference, process_ocr_task
 
 
 class DocumentCreateView(generics.CreateAPIView):
@@ -150,9 +151,8 @@ class DocumentationCreateView(generics.CreateAPIView):
             if not any(instance.file_url.name.lower().endswith(ext) for ext in allowed_extensions):
                 raise ValidationError("지원되지 않는 파일 형식입니다. PDF, PNG, JPG만 가능합니다.")
 
-            
-            process_inference.delay(instance.id)
-            process_ocr_task.delay(instance.id, api_key)
+            process_inference(instance.id)
+            process_ocr_task(instance.id, api_key)
 
             return instance
         
