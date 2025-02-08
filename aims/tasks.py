@@ -28,12 +28,13 @@ def execute_ocr(api_key, file_path):
 
     if response.status_code == 200:
         content = [page.get("text", "") for page in response.json().get("pages", [])]
-        return content[0]
+        confidence = response.json().get("confidence", 0)
+        return content[0], confidence
     
     print(f"Request failed with status code: {response.status_code}")
     print(f"Response content: {response.text}")
 
-    return "처리 실패"
+    return "처리 실패", 0.
 
 
 @shared_task
@@ -101,7 +102,7 @@ def execute_embedding(queries, api_key):
     )
     
     query_embedding = client.embeddings.create(
-        model = "embedding-query",
+        model = "embedding-passage",
         input = queries
     ).data
 
