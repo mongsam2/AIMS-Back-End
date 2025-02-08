@@ -26,7 +26,6 @@ class DocumentStateChoices(models.TextChoices):
 
 
 class Document(models.Model):
-    #document_type = models.ForeignKey('DocumentType', on_delete=models.CASCADE)
     document_type = models.CharField(max_length=50, choices=DocumentTypeChoices.choices, default=DocumentTypeChoices.논술)
     student = models.ForeignKey('students.Student', on_delete=models.CASCADE, related_name='documents')
     upload_date = models.DateTimeField(auto_now_add=True)
@@ -47,15 +46,6 @@ class DocumentType(models.Model):
 
     def __str__(self):
         return self.name
-    
-
-class RawData(models.Model):
-    upload_date = models.DateTimeField(auto_now_add=True)
-
-    def upload_to(instance, filename):
-        return f'documents/{filename}'
-    
-    file_url = models.FileField(upload_to=upload_to)
 
 
 class Documentation(models.Model):

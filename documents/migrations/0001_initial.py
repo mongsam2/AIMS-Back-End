@@ -21,14 +21,6 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='RawData',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('upload_date', models.DateTimeField(auto_now_add=True)),
-                ('file_url', models.FileField(upload_to=documents.models.RawData.upload_to)),
-            ],
-        ),
-        migrations.CreateModel(
             name='Document',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
