@@ -75,30 +75,36 @@ class SummarizationView(APIView):
         content = extraction.content  
         
         extracted_texts = extract_sections(content, sections)
-
+    
         summary_prompt_path = os.path.join(settings.BASE_DIR, 'aims', 'utils', 'prompt_txt', 'student_record_prompt.txt')
         interview_prompt_path = os.path.join(settings.BASE_DIR, 'aims', 'utils', 'prompt_txt', 'interview_questions.txt')
         
-        with open(summary_prompt_path, 'r', encoding='utf-8') as f1,\
-            open(interview_prompt_path, 'r', encoding='utf-8') as f2:
+        with open(summary_prompt_path, 'r', encoding='utf-8') as f1, \
+             open(interview_prompt_path, 'r', encoding='utf-8') as f2:
             summary_prompt = f1.read()
             interview_prompt = f2.read()
-        
-        summary = get_answer_from_solar.delay(api_key, extracted_texts, summary_prompt)
-        interview = get_answer_from_solar.delay(api_key, extracted_texts, interview_prompt, 0., True)
-
+       
+      
         try:
-            document = Documentation.objects.get(id=document_id)
+            documentation = Documentation.objects.get(id=document_id)
         except Documentation.DoesNotExist:
             raise NotFound(f"Document for document ID {document_id} is not found.")
-        
-        Summarization.objects.create(content=summary, document=document, question=interview)
 
+        student = documentation.student_id 
+        department = student.department.department  
+        
+        summary_prompt = summary_prompt.strip().replace("{지원학과}", department)
+    
+        summary = get_answer_from_solar(api_key, extracted_texts, summary_prompt)
+        interview = get_answer_from_solar(api_key, interview_prompt.format(text=extracted_texts), "", 0.)
+    
+        Summarization.objects.create(content=summary, document=documentation, question=interview)
+    
         return Response({
             'summary': summary,
-            'interview_questions' : interview
+            'interview_questions': interview
         })
-    
+
 
 class DocumentPassFailView(APIView):
 
