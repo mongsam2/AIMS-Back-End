@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer
-from .models import Document, RawData, Documentation
+from .models import Document, Documentation
 from aims.serializers import DocumentPassFailSerializer
 
 
@@ -32,18 +32,9 @@ class StudentRecordsSerializer(ModelSerializer):
         fields = ['id']
 
 
-class RawDataSerializer(ModelSerializer):
-    '''
-    새로운 파일을 업로드할 때, 사용하는 Serializer
-    '''
-    class Meta:
-        model = RawData
-        fields = ('file_url',)
-
-
 class DocumentationSerializer(ModelSerializer):
     class Meta:
         model = Documentation
-        fields = ('id', 'student_id', 'document_type', 'file_url', 'state')
+        fields = ('id', 'student_id', 'document_type', 'file_url', 'state', 'issue_date')
 
         

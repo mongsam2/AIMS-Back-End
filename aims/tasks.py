@@ -28,12 +28,13 @@ def execute_ocr(api_key, file_path):
 
     if response.status_code == 200:
         content = [page.get("text", "") for page in response.json().get("pages", [])]
-        return content[0]
+        confidence = response.json().get("confidence", 0)
+        return content[0], confidence
     
     print(f"Request failed with status code: {response.status_code}")
     print(f"Response content: {response.text}")
 
-    return "처리 실패"
+    return "처리 실패", 0.
 
 
 @shared_task
@@ -78,3 +79,33 @@ def get_answer_from_solar(api_key, content, prompt, temperature=0.7):
     )
 
     return response.choices[0].message.content
+
+
+@shared_task
+def execute_embedding(queries, api_key):
+
+    """
+    1개 이상 100개 미만의 토큰에 대한 임베딩을 일괄 처리
+    각 텍스트에 대한 토큰은 4,000 미만이어야 하고
+    리스트 전체의 토큰 수는 204,800보다 작아야 한다
+
+    Args:
+        queries(list): 리스트 형태의 text
+        api_key(str): 업스테이지 API 키
+
+    Returns:
+        embedding(list): 리스트 형태의 embedding 결과
+    """
+    client = OpenAI(
+        api_key=api_key,
+        base_url="https://api.upstage.ai/v1/solar"
+    )
+    
+    query_embedding = client.embeddings.create(
+        model = "embedding-passage",
+        input = queries
+    ).data
+
+    embedding_list = [i.embedding for i in query_embedding]
+
+    return embedding_list

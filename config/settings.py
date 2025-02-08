@@ -160,20 +160,17 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 X_FRAME_OPTIONS = 'ALLOWALL'
 
-API_KEY = "up_i5WhoWFjRhUXflOznB9DLOMQLcG8n"
-
-
+# Celery 설정
+CELERY_TIMEZONE = 'Asia/Seoul'
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
-
-# Celery 작업에 JSON 직렬화 사용
+CELERY_TASK_TRACK_STARTED = True
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
-
-# Celery 작업 결과를 저장할 백엔드 (옵션)
 CELERY_RESULT_BACKEND = 'django-db'
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 
-# 타임존 설정
-CELERY_TIMEZONE = 'Asia/Seoul'
-
-#CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+# 사용자 config
 LABELS = ["검정고시합격증명서", "국민체력100인증서", "기초생활수급자증명서", "주민등록초본", "체력평가", "생활기록부대체양식"]
+VALID_DATE = "2024-09-03"
+SIMILARITY_THRESHOLD = 0.7
+API_KEY = "up_i5WhoWFjRhUXflOznB9DLOMQLcG8n"

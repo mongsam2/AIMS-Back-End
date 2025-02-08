@@ -2,11 +2,13 @@ import os
 import torch
 import onnxruntime
 from torchvision import models
+from functools import lru_cache
 
 from django.conf import settings
 MODEL_DIR = os.path.join(settings.BASE_DIR, "documents/models")
 
 
+@lru_cache(maxsize=1)
 def load_pytorch_model(model_name="student_model.pth"):
     
     model_path = os.path.join(MODEL_DIR, model_name)
@@ -24,6 +26,7 @@ def load_pytorch_model(model_name="student_model.pth"):
     return model
 
 
+@lru_cache(maxsize=1)
 def load_onnx_model(model_name="student_model.onnx"):
     
     model_path = os.path.join(MODEL_DIR, model_name)
