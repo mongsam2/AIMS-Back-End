@@ -6,6 +6,10 @@ sudo apt install -y poppler-utils
 
 # 작성 중...
 
+### Git Clone
+
+git clone -b develop --single-branch https://github.com/mongsam2/AIMS-Back-End.git
+
 ### 가상 환경 설정
 
 python3 -m venv .venv
