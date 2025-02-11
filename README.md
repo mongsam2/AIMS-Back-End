@@ -22,3 +22,6 @@ python manage.py migrate
 ### 백엔드 서버 실행
 
 python manage.py runserver
+
+### API
+(여기에 API 명세서 링크만 공개해서 넣을까요...?)
