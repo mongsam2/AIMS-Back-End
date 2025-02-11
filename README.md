@@ -27,5 +27,6 @@ python manage.py migrate
 
 python manage.py runserver
 
-### API
-(여기에 API 명세서 링크만 공개해서 넣을까요...?)
+### API 명세서
+(여기에 API 명세서 링크만 공개해서 넣을까요...?)        
+https://naver-boostcamp-cv-07.notion.site/Final-API-bd6ee394414d400aae99bd69b5f869d7?pvs=4
